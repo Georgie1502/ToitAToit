@@ -1,0 +1,21 @@
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+require('dotenv').config();
+const authRoutes = require('./routes/auth');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Middlewares
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes); // Added this line to fix the issue
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});

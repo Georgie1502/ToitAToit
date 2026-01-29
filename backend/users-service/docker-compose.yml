@@ -1,0 +1,47 @@
+services:
+  user-app:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_HOST=users-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+      - DB_NAME=usersdb
+      - JWT_SECRET=votre_secret_jwt
+    depends_on:
+      - users-db
+    networks:
+      - backend-network
+
+  users-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: usersdb
+    # ports:
+    #   - "5433:5432"
+    volumes:
+      - users-db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend-network
+
+  user-pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  users-db-data:
