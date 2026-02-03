@@ -6,9 +6,10 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
 
 // Middlewares
-app.use(cors());
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(morgan('dev'));
 app.use(express.json());
 

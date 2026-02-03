@@ -20,12 +20,7 @@ exports.signup = async (req, res) => {
             [username, email, hashedPassword]
         );   
         res.status(201).json({ 
-            message: 'User registered successfully', 
-            user: { 
-                id: result.rows[0].id, 
-                username: result.rows[0].username, 
-                email: result.rows[0].email 
-            } 
+            message: 'User registered successfully'
         });
     } catch (err) {
         console.error(err.message);
@@ -51,9 +46,25 @@ exports.login = async (req, res) => {
         }
         // Générer un token JWT
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token , user: { id: user.id, username: user.username, email: user.email } });
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 1000,
+        });
+        res.json({ user: { username: user.username, email: user.email } });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ message: 'Server error' });
     }
+};
+
+// Deconnexion
+exports.logout = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+    });
+    res.json({ message: 'Logged out' });
 };

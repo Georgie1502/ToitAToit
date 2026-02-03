@@ -4,25 +4,30 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3004;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
 
 // Middlewares
-app.use(cors());
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(morgan('dev'));
-app.use(express.json());    
+
+const addAuthPrefix = (path) => `/auth${path}`;
+const addUsersPrefix = (path) => `/users${path}`;
 
 // Proxy for Users Service
-app.use('api/auth', createProxyMiddleware({
-    target: 'http://users-service:3001',
+app.use('/api/auth', createProxyMiddleware({
+    target: 'http://user-app:3001',
     changeOrigin: true,
-    pathRewrite: {'^/api/auth': '/auth'},
+    pathRewrite: addAuthPrefix,
 }));
 
-app.use('/users', createProxyMiddleware({
-    target: 'http://users-service:3001',
+app.use('/api/users', createProxyMiddleware({
+    target: 'http://user-app:3001',
     changeOrigin: true,
-    pathRewrite: {'^/api/users': '/users'},
+    pathRewrite: addUsersPrefix,
 }));
+
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.json({message: 'API Gateway Toit à Toit is running'});
