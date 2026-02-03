@@ -13,7 +13,9 @@ services:
     depends_on:
       - users-db
     networks:
-      - backend-network
+      backend-network:
+        aliases:
+          - user-app
 
   users-db:
     image: postgres:15-alpine
@@ -41,7 +43,7 @@ services:
 
 networks:
   backend-network:
-    driver: bridge
+    external: true
 
 volumes:
   users-db-data:

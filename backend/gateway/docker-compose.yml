@@ -2,7 +2,7 @@ services:
   gateway-app:
     build: .
     ports:
-      - "3000:3000"
+      - "3004:3004"
     networks:
       - backend-network
 
