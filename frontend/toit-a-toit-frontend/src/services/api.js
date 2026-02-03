@@ -4,7 +4,7 @@ const rawBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:3004';
 const baseURL = rawBaseUrl.replace(/\/+$/, '');
 
 const api = axios.create({
-  baseURL, // API Gateway URL
+  baseURL,
   withCredentials: true,
 });
 
