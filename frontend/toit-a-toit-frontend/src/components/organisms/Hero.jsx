@@ -7,9 +7,9 @@ const Hero = () => {
   return (
     <section className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
       <div>
-        <Pill>Toit a toit</Pill>
+        <Pill>Toit à toit</Pill>
         <h1 className="mt-6 font-display text-4xl text-ink md:text-5xl">
-          Trouve ton toit, cree du lien.
+          Trouve ton toit, crée du lien.
         </h1>
         <p className="mt-4 max-w-xl text-base text-ink/70 md:text-lg">
           Une plateforme douce et dynamique pour connecter les colocataires, partager les envies et
@@ -17,7 +17,7 @@ const Hero = () => {
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button as={Link} to="/signup" size="lg" variant="primary">
-            Demarrer
+            Démarrer
           </Button>
           <Button as={Link} to="/login" size="lg" variant="ghost">
             Se connecter
@@ -25,8 +25,8 @@ const Hero = () => {
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           <StatCard label="Matchs utiles" value="95%" note="pertinence moyenne" tone="blue" />
-          <StatCard label="Reponses rapides" value="12h" note="temps moyen" tone="rose" />
-          <StatCard label="Villes actives" value="28" note="communaute engagee" tone="teal" />
+          <StatCard label="Réponses rapides" value="12h" note="temps moyen" tone="rose" />
+          <StatCard label="Villes actives" value="28" note="communauté engagée" tone="teal" />
         </div>
       </div>
       <div className="relative">
@@ -44,7 +44,7 @@ const Hero = () => {
           </div>
           <img
             src="/hero-people.png"
-            alt="Communaute Toit a toit"
+            alt="Communauté Toit à toit"
             className="pointer-events-none absolute -bottom-2 left-1/2 w-[85%] -translate-x-1/2"
             onError={(event) => {
               event.currentTarget.style.display = 'none';

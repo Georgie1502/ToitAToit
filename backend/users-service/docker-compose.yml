@@ -9,7 +9,8 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres123
       - DB_NAME=users_db
-      - JWT_SECRET=votre_secret_jwt
+      - JWT_SECRET=change_me_in_production
+      - JWT_EXPIRES_IN=24h
     depends_on:
       - users-db
     networks:

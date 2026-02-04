@@ -1,0 +1,22 @@
+﻿services:
+  frontend:
+    build: .
+    container_name: toit-frontend
+    ports:
+      - "3004:3004"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3004
+      - REACT_APP_API_URL=http://localhost:3000
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    external: true
+    name: backend-network

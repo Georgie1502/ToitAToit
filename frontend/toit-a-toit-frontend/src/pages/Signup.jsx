@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/atoms/Button';
 import AuthField from '../components/molecules/AuthField';
 import AuthLayout from '../components/templates/AuthLayout';
@@ -12,6 +12,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,12 +21,13 @@ const Signup = () => {
     setLoading(true);
     try {
       const message = await signup({ username, email, password });
-      setSuccess(message || 'Compte cree. Vous pouvez maintenant vous connecter.');
+      setSuccess(message || '');
       setUsername('');
       setEmail('');
       setPassword('');
+      setTimeout(() => navigate('/login'), 800);
     } catch (err) {
-      setError(err.response?.data?.message || 'Inscription impossible. Reessayez.');
+      setError(err.response?.data?.message || "Erreur lors de l'inscription.");
     } finally {
       setLoading(false);
     }
@@ -33,15 +35,15 @@ const Signup = () => {
 
   return (
     <AuthLayout
-      title="Creer un compte"
-      subtitle="Rejoins la communaute et trouve ta colocation."
+      title="Créer un compte"
+      subtitle="Rejoins la communauté et trouve ta colocation."
       footer={
         <>
-          Deja un compte ? <Link className="font-semibold text-ink" to="/login">Se connecter</Link>
+          Déjà un compte ? <Link className="font-semibold text-ink" to="/login">Se connecter</Link>
         </>
       }
     >
-      <form className="space-y-5" onSubmit={handleSubmit}>
+      <form className="space-y-5" onSubmit={handleSubmit} aria-busy={loading}>
         <AuthField
           label="Pseudo"
           type="text"
@@ -67,12 +69,20 @@ const Signup = () => {
           onChange={(event) => setPassword(event.target.value)}
           required
           autoComplete="new-password"
-          placeholder="Minimum 8 caracteres"
+          placeholder="Minimum 8 caractères"
         />
-        {error ? <div className="rounded-2xl border border-rose/30 bg-rose/10 px-4 py-3 text-sm text-rose">{error}</div> : null}
-        {success ? <div className="rounded-2xl border border-teal/40 bg-teal/20 px-4 py-3 text-sm text-ink">{success}</div> : null}
+        {error ? (
+          <div role="alert" aria-live="assertive" className="rounded-2xl border border-rose/30 bg-rose/10 px-4 py-3 text-sm text-rose">
+            {error}
+          </div>
+        ) : null}
+        {success ? (
+          <div role="status" aria-live="polite" className="rounded-2xl border border-teal/40 bg-teal/20 px-4 py-3 text-sm text-ink">
+            {success}
+          </div>
+        ) : null}
         <Button type="submit" size="lg" variant="primary" className="w-full" disabled={loading}>
-          {loading ? 'Creation...' : 'Creer mon compte'}
+          {loading ? 'Création...' : 'Créer mon compte'}
         </Button>
       </form>
     </AuthLayout>

@@ -4,7 +4,7 @@ import Logo from '../atoms/Logo';
 import { getCurrentUser, logout } from '../../services/auth';
 
 const linkBase =
-  'text-sm font-semibold text-ink/70 transition hover:text-ink';
+  'text-sm font-semibold text-ink/70 transition hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rose rounded-full px-2 py-1';
 
 const NavBar = () => {
   const user = getCurrentUser();
@@ -29,7 +29,7 @@ const NavBar = () => {
                 Mon profil
               </NavLink>
               <Button size="sm" variant="ghost" type="button" onClick={handleLogout}>
-                Deconnexion
+                Déconnexion
               </Button>
             </>
           ) : (
@@ -38,7 +38,7 @@ const NavBar = () => {
                 Connexion
               </NavLink>
               <Button as={NavLink} size="sm" variant="primary" to="/signup">
-                Creer un compte
+                Créer un compte
               </Button>
             </>
           )}
