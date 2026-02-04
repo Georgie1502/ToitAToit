@@ -1,0 +1,42 @@
+services:
+  messages-app:
+    build: .
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - DB_HOST=messages-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+      - DB_NAME=messages_db
+      - JWT_SECRET=change_me_in_production
+      - JWT_EXPIRES_IN=24h
+      - CLIENT_ORIGIN=http://localhost:3004
+    depends_on:
+      - messages-db
+    networks:
+      backend-network:
+        aliases:
+          - messages-app
+
+  messages-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: messages_db
+    volumes:
+      - messages-db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    external: true
+    name: backend-network
+
+volumes:
+  messages-db-data:
+

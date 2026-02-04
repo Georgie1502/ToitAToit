@@ -20,7 +20,7 @@ const Login = () => {
       await login({ email, password });
       navigate('/profile');
     } catch (err) {
-      setError(err.response?.data?.message || 'Connexion impossible. Reessayez.');
+      setError(err.response?.data?.message || 'Erreur lors de la connexion.');
     } finally {
       setLoading(false);
     }
@@ -32,11 +32,11 @@ const Login = () => {
       subtitle="Retrouve tes conversations et tes favoris."
       footer={
         <>
-          Pas encore de compte ? <Link className="font-semibold text-ink" to="/signup">Creer un compte</Link>
+          Pas encore de compte ? <Link className="font-semibold text-ink" to="/signup">Créer un compte</Link>
         </>
       }
     >
-      <form className="space-y-5" onSubmit={handleSubmit}>
+      <form className="space-y-5" onSubmit={handleSubmit} aria-busy={loading}>
         <AuthField
           label="Email"
           type="email"
@@ -55,7 +55,11 @@ const Login = () => {
           autoComplete="current-password"
           placeholder="********"
         />
-        {error ? <div className="rounded-2xl border border-rose/30 bg-rose/10 px-4 py-3 text-sm text-rose">{error}</div> : null}
+        {error ? (
+          <div role="alert" aria-live="assertive" className="rounded-2xl border border-rose/30 bg-rose/10 px-4 py-3 text-sm text-rose">
+            {error}
+          </div>
+        ) : null}
         <Button type="submit" size="lg" variant="primary" className="w-full" disabled={loading}>
           {loading ? 'Connexion...' : 'Se connecter'}
         </Button>

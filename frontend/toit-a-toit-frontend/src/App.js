@@ -18,9 +18,10 @@ const RequireAuth = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
+      <a className="skip-link" href="#main-content">Aller au contenu principal</a>
       <div className="min-h-screen flex flex-col">
         <NavBar />
-        <main className="flex-1 px-4 pb-16 pt-10">
+        <main id="main-content" tabIndex="-1" className="flex-1 px-4 pb-16 pt-10">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
