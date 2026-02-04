@@ -1,9 +1,6 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const pool = require('../config/db');
+const AuthService = require("../services/authService");
 
-// Inscription d'un nouvel utilisateur
-exports.signup = async (req, res) => {  
+exports.signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
         // Vérifier si l'utilisateur existe déjà
@@ -27,10 +24,7 @@ exports.signup = async (req, res) => {
         res.status(500).json({ message: 'Server error' });      
     }
 };
-
-// Connexion d'un utilisateur existant
-
-exports.login = async (req, res) => {  
+exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;   
         // Vérifier si l'utilisateur existe

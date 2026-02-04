@@ -1,11 +1,35 @@
+
+
 services:
-  gateway-app:
+  gateway:
     build: .
+    container_name: toit-gateway
     ports:
-      - "3004:3004"
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - FRONTEND_URL=http://localhost:3004
+      - USERS_SERVICE_URL=http://user-app:3001
+      - COLOCATIONS_SERVICE_URL=http://colocations-app:3002
+      - MESSAGES_SERVICE_URL=http://messages-app:3003
     networks:
       - backend-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   backend-network:
     external: true
+    name: backend-network
