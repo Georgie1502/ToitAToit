@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# Frontend - Toit a Toit
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Application React (CRA) + Tailwind pour la plateforme de colocation. Dialogue avec la Gateway sur `http://localhost:3000/api` en dev.
 
-## Available Scripts
+## Demarrage rapide
 
-In the project directory, you can run:
+### Avec Docker
 
-### `npm start`
+```bash
+cd frontend/toit-a-toit-frontend
+docker-compose up --build -d
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Sans Docker
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+cd frontend/toit-a-toit-frontend
+npm install
+npm start
+```
 
-### `npm test`
+L'application tourne par defaut sur `http://localhost:3004` (voir `docker-compose.yml`). Mettre a jour `REACT_APP_API_URL` si besoin (ex. `http://localhost:3000/api`).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Scripts utiles
 
-### `npm run build`
+- `npm start` : mode dev avec hot reload
+- `npm test` : tests unitaires (React Testing Library/Jest)
+- `npm run build` : build production dans `build/`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Structure
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+├── App.js / App.css
+├── index.js / index.css
+├── components/
+│   ├── atoms (Button, Input, Logo, Pill)
+│   ├── molecules (AuthField, FeatureCard, StatCard)
+│   ├── organisms (FeatureGrid, Hero, NavBar)
+│   └── templates (AuthLayout, ...)
+├── pages/ (Home, Login, Signup, Profile, NotFound)
+├── services/ (api.js, auth.js)
+└── assets/public/ (manifest, icons)
+```
 
-### `npm run eject`
+## Configuration API
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+`src/services/api.js` configure Axios. Definir `REACT_APP_API_URL` pour pointer vers la Gateway (`http://localhost:3000/api`). Les tokens JWT sont ajoutes automatiquement via l'intercepteur.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Tests rapides
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm test
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Pour verifier une page manuellement :
+- Gateway en route sur le port 3000
+- Frontend sur `http://localhost:3004`
 
-## Learn More
+## Bonnes pratiques
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Garder les composants presents/containers simples et reutilisables.
+- Utiliser les services Axios pour centraliser les appels API.
+- Eviter de stocker des secrets dans le code; utiliser `.env` (ex. `REACT_APP_API_URL`).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Depannage
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Erreur CORS/404** : confirmer l'URL de l'API et que la Gateway est demarree.
+- **Port deja pris** : changer le port dans `docker-compose.yml` ou `package.json` (scripts start avec `PORT=...`).
+- **Styles manquants** : verifier `tailwind.config.js` et `index.css`.
