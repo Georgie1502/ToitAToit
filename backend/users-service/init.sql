@@ -51,6 +51,7 @@ CREATE TABLE profiles (
   birth_date        DATE NULL,
   gender            TEXT NULL CHECK (gender IN ('F','M','NON_BINARY','OTHER')),
   occupation_status TEXT NULL CHECK (occupation_status IN ('STUDENT','PRO','OTHER')),
+  role              TEXT NULL CHECK (role IN ('OWNER','SEEKER')),
   bio               TEXT NULL,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()

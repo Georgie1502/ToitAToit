@@ -4,6 +4,7 @@ import Button from '../components/atoms/Button';
 import AuthField from '../components/molecules/AuthField';
 import AuthLayout from '../components/templates/AuthLayout';
 import { login } from '../services/auth';
+import { getMyProfile } from '../services/profile';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +19,13 @@ const Login = () => {
     setLoading(true);
     try {
       await login({ email, password });
-      navigate('/profile');
+      const data = await getMyProfile();
+      const role = data?.profile?.role || null;
+      if (!role) {
+        navigate('/onboarding');
+      } else {
+        navigate('/profile');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur lors de la connexion.');
     } finally {

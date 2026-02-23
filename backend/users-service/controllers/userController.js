@@ -75,6 +75,7 @@ exports.getMyProfile = async (req, res) => {
         p.birth_date,
         p.gender,
         p.occupation_status,
+        p.role,
         p.bio,
         p.created_at AS profile_created_at,
         p.updated_at AS profile_updated_at,
@@ -107,6 +108,7 @@ exports.getMyProfile = async (req, res) => {
             birth_date: row.birth_date,
             gender: row.gender,
             occupation_status: row.occupation_status,
+            role: row.role,
             bio: row.bio,
             created_at: row.profile_created_at,
             updated_at: row.profile_updated_at,
@@ -151,18 +153,25 @@ exports.upsertMyProfile = async (req, res) => {
     const birthDate = req.body.birth_date || null;
     const gender = req.body.gender || null;
     const occupationStatus = req.body.occupation_status || null;
+    const role = req.body.role || null;
     const bio = req.body.bio || null;
 
+    const allowedRoles = new Set(["OWNER", "SEEKER"]);
+    if (role !== null && !allowedRoles.has(role)) {
+      return res.status(400).json({ message: "role invalide" });
+    }
+
     const result = await pool.query(
-      `INSERT INTO profiles (user_id, birth_date, gender, occupation_status, bio)
-      VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO profiles (user_id, birth_date, gender, occupation_status, role, bio)
+      VALUES ($1, $2, $3, $4, $5, $6)
       ON CONFLICT (user_id) DO UPDATE
       SET birth_date = EXCLUDED.birth_date,
           gender = EXCLUDED.gender,
           occupation_status = EXCLUDED.occupation_status,
+          role = EXCLUDED.role,
           bio = EXCLUDED.bio
-      RETURNING user_id, birth_date, gender, occupation_status, bio, created_at, updated_at`,
-      [userId, birthDate, gender, occupationStatus, bio],
+      RETURNING user_id, birth_date, gender, occupation_status, role, bio, created_at, updated_at`,
+      [userId, birthDate, gender, occupationStatus, role, bio],
     );
 
     return res.json({ profile: result.rows[0] });
