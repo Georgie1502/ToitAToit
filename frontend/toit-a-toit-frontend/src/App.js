@@ -3,6 +3,7 @@ import NavBar from './components/NavBar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import OnboardingRole from './pages/OnboardingRole';
 import Profile from './pages/Profile';
 import Signup from './pages/Signup';
 import { getCurrentUser } from './services/auth';
@@ -26,6 +27,14 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/onboarding"
+              element={
+                <RequireAuth>
+                  <OnboardingRole />
+                </RequireAuth>
+              }
+            />
             <Route
               path="/profile"
               element={
