@@ -22,15 +22,15 @@ jobs:
           set -euo pipefail
           ISSUE_TITLE="${{ github.event.issue.title }}"
 
-          echo "Issue title: $ISSUE_TITLE"
+          echo "Titre de l'issue : $ISSUE_TITLE"
 
-          # Extract the issue ID from the title (e.g., ONLIB-3002 from "ONLIB-3002 Create Client Auto Docker Deploy")
+          # Extraire l'ID de l'issue depuis le titre (ex. TOIT-3002 depuis "TOIT-3002 Create Client Auto Docker Deploy")
           ISSUE_ID=$(echo "${ISSUE_TITLE}" | grep -oE '^[A-Z]+-[0-9]+' || true)
 
           if [ -z "$ISSUE_ID" ]; then
             echo "error=true" >> $GITHUB_OUTPUT
-            echo "message=Issue title must start with issue ID format (e.g., ONLIB-3002 Create...)" >> $GITHUB_OUTPUT
-            echo "::error::Invalid issue title. Expected prefix like ONLIB-1234."
+            echo "message=Le titre de l'issue doit commencer par un ID au format attendu (ex. TOIT-3002 ...)" >> $GITHUB_OUTPUT
+            echo "::error::Titre d'issue invalide. Préfixe attendu comme TOIT-1234."
             exit 0
           fi
 
@@ -38,7 +38,7 @@ jobs:
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
           echo "issue_id=${ISSUE_ID}" >> $GITHUB_OUTPUT
           echo "error=false" >> $GITHUB_OUTPUT
-          echo "::notice::Proposed branch: ${BRANCH_NAME}"
+          echo "::notice::Branche proposée : ${BRANCH_NAME}"
 
       - name: Check branch existence
         id: branch
@@ -49,11 +49,11 @@ jobs:
 
           if git ls-remote --heads origin "${BRANCH_NAME}" | grep -q "refs/heads/${BRANCH_NAME}"; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "message=Branch already exists: ${BRANCH_NAME}" >> $GITHUB_OUTPUT
-            echo "::warning::Branch already exists on origin: ${BRANCH_NAME}"
+            echo "message=La branche existe déjà : ${BRANCH_NAME}" >> $GITHUB_OUTPUT
+            echo "::warning::La branche existe déjà sur origin : ${BRANCH_NAME}"
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "::notice::Branch does not exist on origin: ${BRANCH_NAME}"
+            echo "::notice::La branche n'existe pas sur origin : ${BRANCH_NAME}"
           fi
 
       - name: Create branch from default
@@ -64,12 +64,12 @@ jobs:
           git config user.email "actions@github.com"
 
           DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
-          echo "Using default branch: ${DEFAULT_BRANCH}"
+          echo "Branche par défaut utilisée : ${DEFAULT_BRANCH}"
 
           git fetch origin "${DEFAULT_BRANCH}"
           git checkout "${DEFAULT_BRANCH}"
 
-          # Create new branch
+          # Créer la nouvelle branche
           git checkout -b "${{ steps.issue.outputs.branch_name }}"
           git push origin "${{ steps.issue.outputs.branch_name }}"
 
@@ -82,7 +82,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `✅ Branch created: \`${{ steps.issue.outputs.branch_name }}\`\n\nYou can now start working on this issue using the feature branch.`
+              body: `✅ Branche créée : \`${{ steps.issue.outputs.branch_name }}\`\n\nTu peux maintenant commencer à travailler sur cette issue en utilisant la branche de fonctionnalité.`
             })
 
       - name: Comment on issue - Branch exists
@@ -94,7 +94,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `⚠️ Branch already exists: \`${{ steps.issue.outputs.branch_name }}\`\n\nPlease use the existing branch for this issue.`
+              body: `⚠️ La branche existe déjà : \`${{ steps.issue.outputs.branch_name }}\`\n\nMerci d'utiliser la branche existante pour cette issue.`
             })
 
       - name: Comment on issue - Error
@@ -106,7 +106,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `❌ Failed to create branch: ${{ steps.issue.outputs.message }}\n\nPlease update the issue title to follow the format: \`ONLIB-#### Description\``
+              body: `❌ Échec de création de la branche : ${{ steps.issue.outputs.message }}\n\nMerci de mettre à jour le titre de l'issue au format : \`TOIT-#### Description\``
             })
 
       - name: Write step summary
@@ -114,27 +114,27 @@ jobs:
         run: |
           set -euo pipefail
           {
-            echo "## Create Branch from Issue"
+            echo "## Créer une branche à partir d'une issue"
             echo
             echo "- Issue: #${{ github.event.issue.number }}"
-            echo "- Title: ${{ github.event.issue.title }}"
+            echo "- Titre : ${{ github.event.issue.title }}"
           } >> "$GITHUB_STEP_SUMMARY"
 
           if [ "${{ steps.issue.outputs.error }}" = "true" ]; then
             {
-              echo "- Status: Failed"
-              echo "- Reason: ${{ steps.issue.outputs.message }}"
+              echo "- Statut : Échec"
+              echo "- Raison : ${{ steps.issue.outputs.message }}"
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
 
           {
-            echo "- Issue ID: ${{ steps.issue.outputs.issue_id }}"
-            echo "- Branch: ${{ steps.issue.outputs.branch_name }}"
+            echo "- ID issue : ${{ steps.issue.outputs.issue_id }}"
+            echo "- Branche : ${{ steps.issue.outputs.branch_name }}"
           } >> "$GITHUB_STEP_SUMMARY"
 
           if [ "${{ steps.branch.outputs.exists }}" = "true" ]; then
-            echo "- Status: Branch already exists" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Statut : La branche existe déjà" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "- Status: Branch created" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Statut : Branche créée" >> "$GITHUB_STEP_SUMMARY"
           fi
