@@ -1,0 +1,140 @@
+name: Create Branch from Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract issue details
+        id: issue
+        run: |
+          set -euo pipefail
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+
+          echo "Issue title: $ISSUE_TITLE"
+
+          # Extract the issue ID from the title (e.g., ONLIB-3002 from "ONLIB-3002 Create Client Auto Docker Deploy")
+          ISSUE_ID=$(echo "${ISSUE_TITLE}" | grep -oE '^[A-Z]+-[0-9]+' || true)
+
+          if [ -z "$ISSUE_ID" ]; then
+            echo "error=true" >> $GITHUB_OUTPUT
+            echo "message=Issue title must start with issue ID format (e.g., ONLIB-3002 Create...)" >> $GITHUB_OUTPUT
+            echo "::error::Invalid issue title. Expected prefix like ONLIB-1234."
+            exit 0
+          fi
+
+          BRANCH_NAME="feat/${ISSUE_ID}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "issue_id=${ISSUE_ID}" >> $GITHUB_OUTPUT
+          echo "error=false" >> $GITHUB_OUTPUT
+          echo "::notice::Proposed branch: ${BRANCH_NAME}"
+
+      - name: Check branch existence
+        id: branch
+        if: steps.issue.outputs.error == 'false'
+        run: |
+          set -euo pipefail
+          BRANCH_NAME="${{ steps.issue.outputs.branch_name }}"
+
+          if git ls-remote --heads origin "${BRANCH_NAME}" | grep -q "refs/heads/${BRANCH_NAME}"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "message=Branch already exists: ${BRANCH_NAME}" >> $GITHUB_OUTPUT
+            echo "::warning::Branch already exists on origin: ${BRANCH_NAME}"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "::notice::Branch does not exist on origin: ${BRANCH_NAME}"
+          fi
+
+      - name: Create branch from default
+        if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'false'
+        run: |
+          set -euo pipefail
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
+          echo "Using default branch: ${DEFAULT_BRANCH}"
+
+          git fetch origin "${DEFAULT_BRANCH}"
+          git checkout "${DEFAULT_BRANCH}"
+
+          # Create new branch
+          git checkout -b "${{ steps.issue.outputs.branch_name }}"
+          git push origin "${{ steps.issue.outputs.branch_name }}"
+
+      - name: Comment on issue - Success
+        if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ Branch created: \`${{ steps.issue.outputs.branch_name }}\`\n\nYou can now start working on this issue using the feature branch.`
+            })
+
+      - name: Comment on issue - Branch exists
+        if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `⚠️ Branch already exists: \`${{ steps.issue.outputs.branch_name }}\`\n\nPlease use the existing branch for this issue.`
+            })
+
+      - name: Comment on issue - Error
+        if: steps.issue.outputs.error == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `❌ Failed to create branch: ${{ steps.issue.outputs.message }}\n\nPlease update the issue title to follow the format: \`ONLIB-#### Description\``
+            })
+
+      - name: Write step summary
+        if: always()
+        run: |
+          set -euo pipefail
+          {
+            echo "## Create Branch from Issue"
+            echo
+            echo "- Issue: #${{ github.event.issue.number }}"
+            echo "- Title: ${{ github.event.issue.title }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${{ steps.issue.outputs.error }}" = "true" ]; then
+            {
+              echo "- Status: Failed"
+              echo "- Reason: ${{ steps.issue.outputs.message }}"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          {
+            echo "- Issue ID: ${{ steps.issue.outputs.issue_id }}"
+            echo "- Branch: ${{ steps.issue.outputs.branch_name }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${{ steps.branch.outputs.exists }}" = "true" ]; then
+            echo "- Status: Branch already exists" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- Status: Branch created" >> "$GITHUB_STEP_SUMMARY"
+          fi
