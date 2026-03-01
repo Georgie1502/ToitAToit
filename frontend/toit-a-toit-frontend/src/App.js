@@ -1,10 +1,15 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import NavBar from './components/NavBar';
+import { NavBar } from './components';
 import Home from './pages/Home';
+import ListingDetails from './pages/ListingDetails';
 import Login from './pages/Login';
+import MyListings from './pages/MyListings';
 import NotFound from './pages/NotFound';
+import OnboardingOwner from './pages/OnboardingOwner';
 import OnboardingRole from './pages/OnboardingRole';
+import OnboardingSeeker from './pages/OnboardingSeeker';
 import Profile from './pages/Profile';
+import Securite from './pages/Securite';
 import Signup from './pages/Signup';
 import { getCurrentUser } from './services/auth';
 
@@ -25,6 +30,9 @@ function App() {
         <main id="main-content" tabIndex="-1" className="flex-1 px-4 pb-16 pt-10">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/search" element={<Home />} />
+            <Route path="/publish" element={<Navigate to="/mes-annonces" replace />} />
+            <Route path="/comment-ca-marche" element={<Navigate to="/onboarding" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route
@@ -36,6 +44,22 @@ function App() {
               }
             />
             <Route
+              path="/onboarding/owner"
+              element={
+                <RequireAuth>
+                  <OnboardingOwner />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/onboarding/seeker"
+              element={
+                <RequireAuth>
+                  <OnboardingSeeker />
+                </RequireAuth>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <RequireAuth>
@@ -43,6 +67,23 @@ function App() {
                 </RequireAuth>
               }
             />
+            <Route
+              path="/mes-annonces"
+              element={
+                <RequireAuth>
+                  <MyListings />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/annonces/:id"
+              element={
+                <RequireAuth>
+                  <ListingDetails />
+                </RequireAuth>
+              }
+            />
+            <Route path="/securite" element={<Securite />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

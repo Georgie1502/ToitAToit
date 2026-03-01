@@ -10,26 +10,25 @@ const FeatureGrid = () => {
           </p>
           <h2 className="mt-3 font-display text-3xl text-ink">Une expérience simple et humaine.</h2>
         </div>
-        <p className="max-w-md text-sm text-ink/70">
-          Des outils clairs pour créer des colocations durables, du premier contact à
-          l'installation.
+        <p className="max-w-md text-sm text-muted">
+          Des outils clairs pour créer des colocations durables, du premier contact à l'installation.
         </p>
       </div>
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         <FeatureCard
           title="Profils détaillés"
           text="Affiche tes habitudes, ton budget et tes envies pour mieux matcher."
-          tone="rose"
+          tone="accent"
         />
         <FeatureCard
           title="Messagerie fluide"
           text="Discute en temps réel, planifie les visites et garde tout au même endroit."
-          tone="blue"
+          tone="primary"
         />
         <FeatureCard
           title="Recherche locale"
           text="Explore des quartiers compatibles avec ton style de vie."
-          tone="teal"
+          tone="secondary"
         />
       </div>
     </section>

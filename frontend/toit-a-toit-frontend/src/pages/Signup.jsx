@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '../components/atoms/Button';
-import AuthField from '../components/molecules/AuthField';
-import AuthLayout from '../components/templates/AuthLayout';
+import { Button } from '../components/atoms';
+import { AuthField } from '../components/molecules';
+import { AuthLayout } from '../components/templates';
 import { signup } from '../services/auth';
 
 const Signup = () => {
@@ -72,12 +72,20 @@ const Signup = () => {
           placeholder="Minimum 8 caractères"
         />
         {error ? (
-          <div role="alert" aria-live="assertive" className="rounded-2xl border border-rose/30 bg-rose/10 px-4 py-3 text-sm text-rose">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"
+          >
             {error}
           </div>
         ) : null}
         {success ? (
-          <div role="status" aria-live="polite" className="rounded-2xl border border-teal/40 bg-teal/20 px-4 py-3 text-sm text-ink">
+          <div
+            role="status"
+            aria-live="polite"
+            className="rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-ink"
+          >
             {success}
           </div>
         ) : null}
