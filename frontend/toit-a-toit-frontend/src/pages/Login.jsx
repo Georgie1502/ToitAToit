@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '../components/atoms/Button';
-import AuthField from '../components/molecules/AuthField';
-import AuthLayout from '../components/templates/AuthLayout';
+import { Button } from '../components/atoms';
+import { AuthField } from '../components/molecules';
+import { AuthLayout } from '../components/templates';
 import { login } from '../services/auth';
 import { getMyProfile } from '../services/profile';
 
@@ -63,7 +63,11 @@ const Login = () => {
           placeholder="********"
         />
         {error ? (
-          <div role="alert" aria-live="assertive" className="rounded-2xl border border-rose/30 bg-rose/10 px-4 py-3 text-sm text-rose">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"
+          >
             {error}
           </div>
         ) : null}

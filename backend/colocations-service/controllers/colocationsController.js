@@ -145,6 +145,7 @@ exports.createListing = async (req, res) => {
     const address = (req.body.location?.address || req.body.address || null) ?? null;
     const lat = req.body.location?.lat ?? req.body.lat ?? null;
     const lng = req.body.location?.lng ?? req.body.lng ?? null;
+    const photos = Array.isArray(req.body.photos) ? req.body.photos : [];
 
     if (!title || !description || rentAmount === null || !availableFrom) {
       return res.status(400).json({
@@ -193,6 +194,26 @@ exports.createListing = async (req, res) => {
         status,
       ],
     );
+
+    if (photos.length > 0) {
+      const photoValues = [];
+      const photoParams = [];
+      let paramIndex = 1;
+
+      photos
+        .filter((url) => typeof url === "string" && url.trim() !== "")
+        .forEach((url, index) => {
+          photoValues.push(`($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++})`);
+          photoParams.push(randomUUID(), listingId, url.trim(), index);
+        });
+
+      if (photoValues.length > 0) {
+        await client.query(
+          `INSERT INTO listing_photos (id, listing_id, url, sort_order) VALUES ${photoValues.join(", ")}`,
+          photoParams,
+        );
+      }
+    }
 
     await client.query("COMMIT");
 

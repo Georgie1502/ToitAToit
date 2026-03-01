@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import Button from '../components/atoms/Button';
-import PageShell from '../components/templates/PageShell';
+import { Button } from '../components/atoms';
+import { PageShell } from '../components/templates';
 
 const NotFound = () => {
   return (
