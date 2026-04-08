@@ -1,81 +1,139 @@
-const housingLabels = {
-  ROOM: 'Chambre',
-  STUDIO: 'Studio',
-  FLAT: 'Appartement',
-  HOUSE: 'Maison',
-  OTHER: 'Autre',
-};
+const housingLabels = { ROOM: 'Chambre', STUDIO: 'Studio', FLAT: 'Appartement', HOUSE: 'Maison', OTHER: 'Autre' };
+const statusLabels = { DRAFT: 'Brouillon', PUBLISHED: 'Publié', PAUSED: 'En pause', CLOSED: 'Fermé' };
 
-const statusLabels = {
-  DRAFT: 'Brouillon',
-  PUBLISHED: 'Publie',
-  PAUSED: 'En pause',
-  CLOSED: 'Ferme',
-};
-
-const formatMoney = (value) => {
-  if (value === null || value === undefined || value === '') {
-    return 'Non renseigne';
-  }
-  return `${value} EUR`;
-};
-
-const ListingCard = ({ listing, photoUrl, actions }) => {
-  const statusLabel = statusLabels[listing?.status] || listing?.status || 'Non renseigne';
-  const housingLabel = housingLabels[listing?.housing_type] || listing?.housing_type || 'Non renseigne';
+const ListingCard = ({ listing, photoUrl, actions, horizontal = false }) => {
+  const coverPhoto = photoUrl || listing?.photo_url || null;
+  const statusLabel = statusLabels[listing?.status] || listing?.status || 'Non renseigné';
+  const housingLabel = housingLabels[listing?.housing_type] || listing?.housing_type || '';
   const locationLabel = listing?.city
     ? `${listing.city}${listing.postal_code ? ` (${listing.postal_code})` : ''}`
-    : 'Localisation a definir';
+    : 'Localisation à définir';
+
+  if (horizontal) {
+    return (
+      <article className="group flex flex-col md:flex-row bg-surface rounded-3xl overflow-hidden shadow-soft border-2 border-transparent hover:border-primary/15 transition-all duration-500">
+        <div className="relative md:w-72 h-52 md:h-auto shrink-0 bg-background overflow-hidden">
+          {coverPhoto ? (
+            <img
+              src={coverPhoto}
+              alt={listing?.title || 'Annonce colocation'}
+              className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center font-body text-xs font-semibold uppercase tracking-widest text-muted">
+              Photo à venir
+            </div>
+          )}
+          <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+            <span className="rounded-full bg-ink/60 px-2.5 py-1 text-[10px] font-semibold text-inverse backdrop-blur-sm">
+              {statusLabel}
+            </span>
+            {housingLabel ? (
+              <span className="rounded-full bg-secondaryContainer/70 px-2.5 py-1 text-[10px] font-semibold text-ink backdrop-blur-sm">
+                {housingLabel}
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="flex-1 p-7 flex flex-col justify-between min-w-0">
+          <div>
+            <div className="flex justify-between items-start gap-4 mb-1">
+              <h3 className="font-display text-xl font-bold text-ink group-hover:text-primary transition-colors truncate">
+                {listing?.title || 'Annonce sans titre'}
+              </h3>
+              {listing?.rent_amount != null ? (
+                <span className="shrink-0 font-display text-xl font-extrabold text-primary">
+                  {listing.rent_amount}€
+                  <span className="text-xs font-normal text-muted">/mois</span>
+                </span>
+              ) : null}
+            </div>
+
+            <p className="font-body text-sm text-muted mb-3 flex items-center gap-1">
+              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>
+              {locationLabel}
+            </p>
+
+            {listing?.description ? (
+              <p className="line-clamp-2 font-body text-sm text-muted mb-4">{listing.description}</p>
+            ) : null}
+
+            <div className="flex flex-wrap gap-2">
+              {listing?.surface_m2 ? (
+                <span className="rounded-full bg-surfaceContainer px-3 py-1 font-body text-xs font-semibold text-ink flex items-center gap-1">
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>bed</span>
+                  {listing.surface_m2} m²
+                </span>
+              ) : null}
+              {listing?.city ? (
+                <span className="rounded-full bg-surfaceContainer px-3 py-1 font-body text-xs font-semibold text-ink">
+                  {listing.city}
+                </span>
+              ) : null}
+            </div>
+          </div>
+
+          {actions ? (
+            <div className="mt-5 pt-5 border-t border-border flex justify-end">
+              {actions}
+            </div>
+          ) : null}
+        </div>
+      </article>
+    );
+  }
 
   return (
-    <article className="group overflow-hidden rounded-2xl bg-surface shadow-soft ring-1 ring-border transition duration-150 ease-subtle hover:-translate-y-1 hover:shadow-lift">
+    <article className="group overflow-hidden rounded-3xl bg-surface shadow-soft transition duration-200 hover:scale-[1.015] hover:shadow-lift">
       <div className="relative aspect-[4/3] bg-background">
-        {photoUrl ? (
-          <img
-            src={photoUrl}
-            alt={listing?.title || 'Annonce colocation'}
-            className="h-full w-full object-cover"
-          />
+        {coverPhoto ? (
+          <img src={coverPhoto} alt={listing?.title || 'Annonce colocation'} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full items-center justify-center text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
-            Photo a venir
+          <div className="flex h-full items-center justify-center font-body text-xs font-semibold uppercase tracking-widest text-muted">
+            Photo à venir
           </div>
         )}
         <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-inverse">
+          <span className="rounded-full bg-ink/60 px-3 py-1 text-xs font-semibold text-inverse backdrop-blur-sm">
             {statusLabel}
           </span>
-          <span className="rounded-full bg-secondary/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-primary">
-            {housingLabel}
-          </span>
+          {housingLabel ? (
+            <span className="rounded-full bg-secondaryContainer/70 px-3 py-1 text-xs font-semibold text-ink backdrop-blur-sm">
+              {housingLabel}
+            </span>
+          ) : null}
         </div>
       </div>
-      <div className="space-y-4 p-5">
+
+      <div className="space-y-4 p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold text-ink">{listing?.title || 'Annonce sans titre'}</h3>
-            <p className="mt-1 text-sm text-muted">{locationLabel}</p>
+            <h3 className="font-display text-lg text-ink">{listing?.title || 'Annonce sans titre'}</h3>
+            <p className="mt-0.5 font-body text-sm text-muted">{locationLabel}</p>
           </div>
-          <div className="rounded-lg bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-            {formatMoney(listing?.rent_amount)}
-          </div>
+          {listing?.rent_amount != null ? (
+            <span className="rounded-2xl bg-primaryContainer/20 px-3 py-1 font-body text-sm font-semibold text-primary">
+              {listing.rent_amount} EUR
+            </span>
+          ) : null}
         </div>
 
-        <p className="text-sm text-ink/80">{listing?.description || 'Aucune description pour le moment.'}</p>
+        {listing?.description ? (
+          <p className="line-clamp-2 font-body text-sm text-muted">{listing.description}</p>
+        ) : null}
 
-        <div className="grid grid-cols-1 gap-3 text-sm text-muted sm:grid-cols-3">
-          <div className="flex items-center gap-2">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-support" />
-            <span>{housingLabel}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-secondary" />
-            <span>{listing?.surface_m2 ? `${listing.surface_m2} m2` : 'Surface a definir'}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-primary" />
-            <span>{locationLabel}</span>
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {listing?.surface_m2 ? (
+            <span className="rounded-full bg-surfaceContainer px-3 py-1 font-body text-xs font-semibold text-ink">
+              {listing.surface_m2} m²
+            </span>
+          ) : null}
+          {listing?.city ? (
+            <span className="rounded-full bg-surfaceContainer px-3 py-1 font-body text-xs font-semibold text-ink">
+              {listing.city}
+            </span>
+          ) : null}
         </div>
 
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}

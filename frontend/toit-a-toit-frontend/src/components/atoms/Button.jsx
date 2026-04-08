@@ -1,16 +1,19 @@
 const base =
-  'inline-flex items-center justify-center rounded-[12px] font-semibold transition duration-150 ease-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryHover focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-65';
+  'inline-flex items-center justify-center rounded-full font-semibold transition duration-200 ease-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryContainer focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
 
 const variants = {
-  primary: 'bg-primary text-inverse shadow-soft hover:-translate-y-[1px] hover:bg-primaryHover',
-  secondary: 'border border-secondary text-secondary bg-transparent hover:bg-secondary/10 hover:-translate-y-[1px] shadow-soft',
-  ghost: 'text-ink hover:bg-surface border border-transparent hover:-translate-y-[1px]',
+  primary:
+    'bg-cta-gradient text-inverse shadow-soft hover:scale-[1.02] hover:shadow-lift active:scale-[0.98]',
+  secondary:
+    'bg-surface text-primary border border-primary/20 shadow-soft hover:border-primary/50 hover:scale-[1.02] active:scale-[0.98]',
+  ghost:
+    'text-ink bg-transparent hover:bg-surfaceContainer hover:scale-[1.02] active:scale-[0.98]',
 };
 
 const sizes = {
   sm: 'px-4 py-2 text-sm',
   md: 'px-5 py-2.5 text-sm',
-  lg: 'px-6 py-3 text-base',
+  lg: 'px-7 py-3.5 text-base',
 };
 
 const Button = ({ as: Component = 'button', variant = 'primary', size = 'md', className = '', ...props }) => {
