@@ -9,11 +9,13 @@ const roles = [
     id: 'OWNER',
     title: 'Je propose une colocation',
     description: 'Tu as une chambre ou un logement et tu veux trouver des colocataires.',
+    tag: 'Propriétaire',
   },
   {
     id: 'SEEKER',
     title: 'Je cherche une colocation',
     description: 'Tu veux rejoindre un logement et rencontrer des colocataires.',
+    tag: 'Chercheur',
   },
 ];
 
@@ -33,13 +35,9 @@ const OnboardingRole = () => {
     setLoading(true);
     try {
       await upsertMyProfile({ role });
-      if (role === 'OWNER') {
-        navigate('/onboarding/owner');
-      } else {
-        navigate('/onboarding/seeker');
-      }
+      navigate(role === 'OWNER' ? '/onboarding/owner' : '/onboarding/seeker');
     } catch (err) {
-      setError(err.response?.data?.message || "Impossible d'enregistrer le role.");
+      setError(err.response?.data?.message || "Impossible d'enregistrer le rôle.");
     } finally {
       setLoading(false);
     }
@@ -47,20 +45,24 @@ const OnboardingRole = () => {
 
   return (
     <PageShell>
-      <div className="mx-auto max-w-3xl rounded-[32px] bg-card p-8 shadow-lift ring-1 ring-border">
-        <h2 className="font-display text-3xl text-ink">Onboarding</h2>
-        <p className="mt-3 text-sm text-muted">
-          Choisis ton intention principale pour personaliser ton experience.
-        </p>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit} aria-busy={loading}>
+      <div className="mx-auto max-w-2xl space-y-8">
+        <div className="space-y-3">
+          <p className="font-body text-xs font-semibold uppercase tracking-widest text-primary">Onboarding</p>
+          <h2 className="font-display text-4xl text-ink">Quelle est ton intention ?</h2>
+          <p className="font-body text-base text-muted">
+            Choisis ton rôle pour personnaliser ton expérience.
+          </p>
+        </div>
+
+        <form className="space-y-6" onSubmit={handleSubmit} aria-busy={loading}>
           <div className="grid gap-4 md:grid-cols-2">
             {roles.map((item) => (
               <label
                 key={item.id}
-                className={`cursor-pointer rounded-3xl border px-5 py-6 transition ${
+                className={`cursor-pointer rounded-3xl p-7 shadow-soft transition duration-200 hover:scale-[1.01] ${
                   role === item.id
-                    ? 'border-primary bg-primary/5 shadow-soft'
-                    : 'border-border bg-card/80 hover:border-primary/40'
+                    ? 'bg-primaryContainer/15 shadow-lift ring-2 ring-primary/40'
+                    : 'bg-surface ring-1 ring-ink/8 hover:ring-primary/20'
                 }`}
               >
                 <input
@@ -71,23 +73,23 @@ const OnboardingRole = () => {
                   onChange={() => setRole(item.id)}
                   className="sr-only"
                 />
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">{item.id}</p>
-                <p className="mt-3 text-lg font-semibold text-ink">{item.title}</p>
-                <p className="mt-2 text-sm text-muted">{item.description}</p>
+                <span className="rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold text-ink">
+                  {item.tag}
+                </span>
+                <p className="mt-4 font-display text-xl text-ink">{item.title}</p>
+                <p className="mt-2 font-body text-sm text-muted">{item.description}</p>
               </label>
             ))}
           </div>
+
           {error ? (
-            <div
-              role="alert"
-              aria-live="assertive"
-              className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"
-            >
+            <div role="alert" aria-live="assertive" className="rounded-3xl bg-danger/10 px-5 py-4 font-body text-sm text-danger">
               {error}
             </div>
           ) : null}
+
           <Button type="submit" size="lg" variant="primary" className="w-full" disabled={loading}>
-            {loading ? 'Enregistrement...' : 'Continuer'}
+            {loading ? 'Enregistrement...' : 'Continuer →'}
           </Button>
         </form>
       </div>

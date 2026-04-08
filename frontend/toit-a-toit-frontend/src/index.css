@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600&family=Newsreader:ital,wght@1,400;1,500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,20 +6,34 @@
 
 @layer base {
   :root {
-    --color-primary: #4a3279;
-    --color-primary-hover: #826cad;
-    --color-secondary: #60bbea;
-    --color-accent: #ef6d96;
-    --color-accent-soft: #feeb8d;
-    --color-support: #8bd1d3;
-    --color-background: #dbe9f4;
-    --color-surface: #ffffff;
-    --color-ink: #1b2030;
-    --color-inverse: #ffffff;
-    --color-muted: #4b5563;
-    --color-border: #e2e8f0;
-    --color-backdrop: #cfd8e3;
-    --color-danger: #ff586a;
+    /* Primary: deep rose */
+    --color-primary: #A8275A;
+    --color-primary-hover: #C93070;
+    --color-primary-container: #FF709F;
+
+    /* Secondary / info */
+    --color-secondary: #4BABDC;
+    --color-secondary-container: #83DEFF;
+
+    /* Surfaces — layered paper */
+    --color-background: #EEF8FF;          /* base layer */
+    --color-surface: #FFFFFF;             /* card layer */
+    --color-surface-container: #DDEAF2;   /* grouping layer */
+
+    /* Semantic */
+    --color-accent: #FF709F;
+    --color-accent-soft: #B5E8C8;         /* mint / story tag */
+    --color-support: #DDEAF2;
+
+    /* Text */
+    --color-ink: #263035;
+    --color-inverse: #FFFFFF;
+    --color-muted: #4B6672;
+
+    /* Ghost border — felt, not seen */
+    --color-border: rgba(38, 48, 53, 0.12);
+    --color-backdrop: #DDEAF2;
+    --color-danger: #E53935;
   }
 
   * {
@@ -28,7 +42,7 @@
 
   body {
     margin: 0;
-    font-family: theme('fontFamily.body');
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif;
     color: var(--color-ink);
     background: var(--color-background);
     min-height: 100vh;
@@ -54,12 +68,27 @@
     text-decoration: none;
     transform: translateY(-200%);
     transition: transform 0.2s ease;
-    box-shadow: 0 0 0 4px rgba(130, 108, 173, 0.25);
   }
 
   .skip-link:focus,
   .skip-link:focus-visible {
     transform: translateY(0);
+  }
+
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
   img {
@@ -68,7 +97,7 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-accent);
+    outline: 3px solid var(--color-primary-container);
     outline-offset: 2px;
   }
 }

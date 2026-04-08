@@ -1,5 +1,12 @@
 export { default as FeatureGrid } from './FeatureGrid';
 export { default as Hero } from './Hero';
+export { default as ListingDetailsGallery } from './ListingDetailsGallery';
+export { default as ListingDetailsMainSections } from './ListingDetailsMainSections';
+export { default as ListingDetailsQuickFacts } from './ListingDetailsQuickFacts';
+export { default as ListingDetailsStickyCard } from './ListingDetailsStickyCard';
 export { default as ListingShowcase } from './ListingShowcase';
+export { default as ProfileBadgesCard } from './ProfileBadgesCard';
+export { default as ProfileHeroCard } from './ProfileHeroCard';
+export { default as ProfileStoryAndListings } from './ProfileStoryAndListings';
 export { default as NavBar } from './NavBar';
 export { default as OwnerProfileOverview } from './OwnerProfileOverview';

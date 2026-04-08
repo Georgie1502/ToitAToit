@@ -39,7 +39,7 @@ const Login = () => {
       subtitle="Retrouve tes conversations et tes favoris."
       footer={
         <>
-          Pas encore de compte ? <Link className="font-semibold text-ink" to="/signup">Créer un compte</Link>
+          Pas encore de compte ? <Link className="font-semibold text-primary" to="/signup">Créer un compte</Link>
         </>
       }
     >

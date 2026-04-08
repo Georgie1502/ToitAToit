@@ -1,11 +1,28 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const colocationsController = require("../controllers/colocationsController");
 const favoritesController = require("../controllers/favoritesController");
 const applicationsController = require("../controllers/applicationsController");
 const matchesController = require("../controllers/matchesController");
+
+const uploadDir = path.join(__dirname, "..", "uploads");
+fs.mkdirSync(uploadDir, { recursive: true });
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: uploadDir,
+    filename: (req, file, cb) => {
+      const safeExtension = path.extname(file.originalname || "").toLowerCase().replace(/[^.a-z0-9]/g, "");
+      cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExtension}`);
+    },
+  }),
+  limits: { fileSize: 8 * 1024 * 1024, files: 10 },
+});
 
 router.get("/", colocationsController.listListings);
 router.get("/search/location", colocationsController.searchByLocation);
@@ -33,8 +50,8 @@ router.delete("/:id/matches", authMiddleware, matchesController.deleteMyMatchFor
 
 router.get("/:id", colocationsController.getListingById);
 
-router.post("/", authMiddleware, colocationsController.createListing);
-router.put("/:id", authMiddleware, colocationsController.updateListing);
+router.post("/", authMiddleware, upload.array("photos", 10), colocationsController.createListing);
+router.put("/:id", authMiddleware, upload.array("photos", 10), colocationsController.updateListing);
 router.delete("/:id", authMiddleware, colocationsController.deleteListing);
 
 module.exports = router;

@@ -143,6 +143,7 @@ const createSpec = (req) => {
                 address: { type: "string", nullable: true },
                 lat: { type: "number", nullable: true },
                 lng: { type: "number", nullable: true },
+                photo_url: { type: "string", nullable: true },
               },
             },
           ],

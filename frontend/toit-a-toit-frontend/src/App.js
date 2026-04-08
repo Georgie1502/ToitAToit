@@ -1,14 +1,18 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { NavBar } from './components';
+import DemandesAnnonce from './pages/DemandesAnnonce';
 import Home from './pages/Home';
 import ListingDetails from './pages/ListingDetails';
 import Login from './pages/Login';
+import MesDemandes from './pages/MesDemandes';
 import MyListings from './pages/MyListings';
 import NotFound from './pages/NotFound';
 import OnboardingOwner from './pages/OnboardingOwner';
 import OnboardingRole from './pages/OnboardingRole';
 import OnboardingSeeker from './pages/OnboardingSeeker';
 import Profile from './pages/Profile';
+import PublierAnnonce from './pages/PublierAnnonce';
+import Recherche from './pages/Recherche';
 import Securite from './pages/Securite';
 import Signup from './pages/Signup';
 import { getCurrentUser } from './services/auth';
@@ -30,8 +34,17 @@ function App() {
         <main id="main-content" tabIndex="-1" className="flex-1 px-4 pb-16 pt-10">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/search" element={<Home />} />
-            <Route path="/publish" element={<Navigate to="/mes-annonces" replace />} />
+            <Route path="/recherche" element={<Recherche />} />
+            <Route path="/search" element={<Navigate to="/recherche" replace />} />
+            <Route
+              path="/publier"
+              element={
+                <RequireAuth>
+                  <PublierAnnonce />
+                </RequireAuth>
+              }
+            />
+            <Route path="/publish" element={<Navigate to="/publier" replace />} />
             <Route path="/comment-ca-marche" element={<Navigate to="/onboarding" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -80,6 +93,22 @@ function App() {
               element={
                 <RequireAuth>
                   <ListingDetails />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/annonces/:id/demandes"
+              element={
+                <RequireAuth>
+                  <DemandesAnnonce />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/mes-demandes"
+              element={
+                <RequireAuth>
+                  <MesDemandes />
                 </RequireAuth>
               }
             />

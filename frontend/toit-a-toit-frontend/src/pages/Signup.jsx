@@ -39,7 +39,7 @@ const Signup = () => {
       subtitle="Rejoins la communauté et trouve ta colocation."
       footer={
         <>
-          Déjà un compte ? <Link className="font-semibold text-ink" to="/login">Se connecter</Link>
+          Déjà un compte ? <Link className="font-semibold text-primary" to="/login">Se connecter</Link>
         </>
       }
     >
