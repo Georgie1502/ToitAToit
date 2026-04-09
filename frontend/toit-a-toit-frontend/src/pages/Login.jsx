@@ -43,7 +43,7 @@ const Login = () => {
         </>
       }
     >
-      <form className="space-y-5" onSubmit={handleSubmit} aria-busy={loading}>
+      <form className="space-y-5 " onSubmit={handleSubmit} aria-busy={loading}>
         <AuthField
           label="Email"
           type="email"

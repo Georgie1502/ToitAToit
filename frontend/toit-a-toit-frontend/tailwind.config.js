@@ -20,11 +20,11 @@ module.exports = {
       colors: {
         primary: 'var(--color-primary)',
         primaryHover: 'var(--color-primary-hover)',
-        primaryContainer: 'var(--color-primary-container)',
+        primaryContainer: 'rgb(var(--color-primary-container-rgb) / <alpha-value>)',
         secondary: 'var(--color-secondary)',
         secondaryContainer: 'var(--color-secondary-container)',
         accent: 'var(--color-accent)',
-        accentSoft: 'var(--color-accent-soft)',
+        accentSoft: 'rgb(var(--color-accent-soft-rgb) / <alpha-value>)',
         support: 'var(--color-support)',
         background: 'var(--color-background)',
         surface: 'var(--color-surface)',

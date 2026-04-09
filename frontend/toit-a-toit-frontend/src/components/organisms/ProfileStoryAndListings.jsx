@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ListingCard } from '../molecules';
 
-const ProfileStoryAndListings = ({ listings, verificationText, user }) => {
+const ProfileStoryAndListings = ({ listings, verificationText, user, role }) => {
   return (
     <section className="lg:col-span-8 space-y-12">
       <div className="overflow-hidden rounded-[1.5rem] bg-surfaceContainerLowest p-10 shadow-[0_4px_40px_rgba(38,48,53,0.05)] relative">
@@ -15,7 +15,7 @@ const ProfileStoryAndListings = ({ listings, verificationText, user }) => {
             : 'Je crois fermement que le logement ne devrait pas seulement être un toit, mais un espace de solidarité. Partager son quotidien, c’est créer un cadre plus humain et plus utile.'}
         </blockquote>
         <p className="mt-4 font-body text-sm italic text-on-surface/60">
-          — {user?.username || 'Votre profil'}, hôte solidaire
+          — {user?.username || 'Votre profil'}, {role === 'OWNER' ? 'hôte solidaire' : 'chercheur(euse) de colocation'}
         </p>
       </div>
 
