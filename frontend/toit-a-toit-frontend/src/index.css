@@ -10,6 +10,7 @@
     --color-primary: #A8275A;
     --color-primary-hover: #C93070;
     --color-primary-container: #FF709F;
+    --color-primary-container-rgb: 255 112 159;
 
     /* Secondary / info */
     --color-secondary: #4BABDC;
@@ -23,6 +24,7 @@
     /* Semantic */
     --color-accent: #FF709F;
     --color-accent-soft: #B5E8C8;         /* mint / story tag */
+    --color-accent-soft-rgb: 181 232 200;
     --color-support: #DDEAF2;
 
     /* Text */

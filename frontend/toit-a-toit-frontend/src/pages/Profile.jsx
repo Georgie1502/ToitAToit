@@ -109,6 +109,7 @@ const Profile = () => {
               listings={userListings}
               verificationText={verificationText}
               user={{ ...user, bio: profileData?.profile?.bio }}
+              role={role}
             />
           </div>
         ) : null}

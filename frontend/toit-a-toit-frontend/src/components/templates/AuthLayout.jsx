@@ -10,7 +10,7 @@ const AuthLayout = ({ title, subtitle, children, footer }) => {
       </div>
 
       {/* Decorative aside */}
-      <aside className="relative hidden overflow-hidden rounded-3xl lg:block"
+      <aside aria-hidden="true" className="relative hidden overflow-hidden rounded-3xl lg:block"
         style={{ background: 'linear-gradient(135deg, #DDEAF2 0%, #EEF8FF 100%)' }}>
         {/* floating blobs */}
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primaryContainer/20 blur-2xl" />
@@ -22,17 +22,21 @@ const AuthLayout = ({ title, subtitle, children, footer }) => {
           <span className="rounded-full bg-accentSoft px-4 py-1.5 text-xs font-semibold text-ink">
             Colocation solidaire
           </span>
-          <span className="mt-1 font-serif text-xs italic text-muted">
+          <span className="mt-1 font-serif text-xs italic text-ink/60">
             "Un toit, du lien, des règles claires."
           </span>
         </div>
 
         <div className="relative mt-32 space-y-4 p-8">
-          <div className="rounded-3xl bg-surface/70 p-6 text-sm text-muted shadow-soft backdrop-blur-sm">
-            Trouve des colocataires qui partagent tes valeurs et ton rythme de vie.
+          <div className="rounded-2xl border border-border bg-white p-6 shadow-lift">
+            <p className="font-body text-sm font-semibold leading-relaxed text-ink">
+              Trouve des colocataires qui partagent tes valeurs et ton rythme de vie.
+            </p>
           </div>
-          <div className="rounded-3xl bg-surface/60 p-6 text-sm text-muted shadow-soft backdrop-blur-sm">
-            Profils détaillés, règles de vie visibles dès la recherche.
+          <div className="rounded-2xl border border-border bg-white p-6 shadow-lift">
+            <p className="font-body text-sm font-semibold leading-relaxed text-ink">
+              Profils détaillés, règles de vie visibles dès la recherche.
+            </p>
           </div>
         </div>
       </aside>
