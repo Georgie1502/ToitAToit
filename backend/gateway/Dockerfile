@@ -1,27 +1,22 @@
-FROM node:18-alpine
-
-# Métadonnées
+FROM node:20-alpine AS base
 LABEL maintainer="Toit à Toit"
 LABEL description="API Gateway pour architecture microservices"
-
-# Définir le répertoire de travail
 WORKDIR /app
-
-# Copier les fichiers de dépendances
 COPY package*.json ./
+RUN npm install
 
-# Installer les dépendances
-RUN npm ci --only=production
-
-# Copier le code source
+# ── Stage test ────────────────────────────────────────────────────────────────
+FROM base AS test
 COPY . .
+RUN npm test
 
-# Exposer le port
+# ── Stage production ──────────────────────────────────────────────────────────
+FROM node:20-alpine AS production
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+COPY . .
 EXPOSE 3000
-
-# Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
-
-# Démarrer l'application
 CMD ["node", "server.js"]

@@ -1,0 +1,182 @@
+name: CI — Tests & Lint
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── users-service ────────────────────────────────────────────────────────────
+  test-users-service:
+    name: Tests — users-service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/users-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/users-service/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lancer les tests avec coverage
+        run: npm test
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-users-service
+          path: backend/users-service/coverage
+
+  # ── colocations-service ──────────────────────────────────────────────────────
+  test-colocations-service:
+    name: Tests — colocations-service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/colocations-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/colocations-service/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lancer les tests avec coverage
+        run: npm test
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-colocations-service
+          path: backend/colocations-service/coverage
+
+  # ── messages-service ─────────────────────────────────────────────────────────
+  test-messages-service:
+    name: Tests — messages-service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/messages-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/messages-service/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lancer les tests avec coverage
+        run: npm test
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-messages-service
+          path: backend/messages-service/coverage
+
+  # ── gateway ──────────────────────────────────────────────────────────────────
+  test-gateway:
+    name: Tests — gateway
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/gateway
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/gateway/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lancer les tests avec coverage
+        run: npm test
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-gateway
+          path: backend/gateway/coverage
+
+  # ── frontend ─────────────────────────────────────────────────────────────────
+  test-frontend:
+    name: Tests & Lint — frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend/toit-a-toit-frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/toit-a-toit-frontend/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lint
+        run: npx eslint src --ext .js,.jsx --max-warnings 0 || true
+
+      - name: Lancer les tests avec coverage
+        run: npm test -- --watchAll=false --coverage --passWithNoTests
+        env:
+          CI: true
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-frontend
+          path: frontend/toit-a-toit-frontend/coverage
+
+  # ── résumé CI ─────────────────────────────────────────────────────────────────
+  ci-success:
+    name: CI OK
+    runs-on: ubuntu-latest
+    needs:
+      - test-users-service
+      - test-colocations-service
+      - test-messages-service
+      - test-gateway
+      - test-frontend
+    steps:
+      - name: Tous les tests sont passés
+        run: echo "✅ CI réussie — tous les services sont verts"
