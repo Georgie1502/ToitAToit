@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1775805724544" clover="3.2.0">
+  <project timestamp="1775805724544" name="All files">
+    <metrics statements="10" coveredstatements="10" conditionals="12" coveredconditionals="11" methods="3" coveredmethods="3" elements="25" coveredelements="24" complexity="0" loc="10" ncloc="10" packages="1" files="1" classes="1"/>
+    <file name="errorHandler.js" path="C:\Users\jor_t\Desktop\ToitAtoit\backend\gateway\middleware\errorHandler.js">
+      <metrics statements="10" coveredstatements="10" conditionals="12" coveredconditionals="11" methods="3" coveredmethods="3"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="7" type="stmt"/>
+      <line num="14" count="7" type="cond" truecount="2" falsecount="0"/>
+      <line num="15" count="1" type="stmt"/>
+      <line num="23" count="6" type="cond" truecount="4" falsecount="0"/>
+      <line num="24" count="2" type="stmt"/>
+      <line num="32" count="4" type="cond" truecount="2" falsecount="0"/>
+      <line num="42" count="2" type="stmt"/>
+      <line num="43" count="2" type="stmt"/>
+      <line num="46" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>
