@@ -64,7 +64,9 @@ const NavBar = () => {
         <div className="flex items-center gap-2 md:hidden">
           {user ? (
             <>
-              <NavLink className={linkBase} to="/mes-annonces">Mes annonces</NavLink>
+              <NavLink className={linkBase} to={isAssociation ? '/admin' : '/mes-annonces'}>
+                {isAssociation ? 'Tableau de bord' : 'Mes annonces'}
+              </NavLink>
               <Button size="sm" variant="ghost" type="button" onClick={handleLogout}>
                 Déconnexion
               </Button>

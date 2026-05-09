@@ -10,11 +10,6 @@ export const updateListingStatus = async (listingId, status) => {
   return response.data?.listing;
 };
 
-export const listApplicationsForListing = async (listingId) => {
-  const response = await api.get(`/api/colocations/${listingId}/applications`);
-  return response.data?.applications || [];
-};
-
 export const selectCandidate = async (applicationId) => {
   const response = await api.patch(`/api/colocations/applications/${applicationId}`, { status: 'ACCEPTED' });
   return response.data?.application;
