@@ -137,14 +137,30 @@ Utiliser un tableau Kanban (GitHub Projects ou autre) pour suivre les taches. No
 
 ### Conventions de commits
 
-Conventional Commits :
-- `feat`: nouvelle fonctionnalite
-- `fix`: correctif
-- `docs`: documentation
-- `style`: formatage
-- `refactor`: refonte sans changement fonctionnel
-- `test`: tests
-- `chore`: taches annexes
+Chaque message de commit doit commencer par un préfixe entre crochets. Ce préfixe détermine automatiquement le type de version incrémentée et la section dans le CHANGELOG.
+
+| Préfixe | Usage | Impact version |
+|---|---|---|
+| `[ADD]` | Nouvelle fonctionnalité | MINEUR `0.8.9 → 0.9.0` |
+| `[FIX]` | Correction de bug | PATCH `0.8.9 → 0.8.10` |
+| `[DESIGN]` | Interface / visuel | PATCH |
+| `[REFACTOR]` | Refactorisation interne | PATCH |
+| `[DOCS]` | Documentation | PATCH |
+| `[TEST]` | Tests | PATCH |
+| `[BREAKING]` | Changement non rétrocompatible | MAJEUR `0.8.9 → 1.0.0` |
+
+Règle de priorité : si une PR contient plusieurs commits, le plus impactant l'emporte.
+Exemple : 1 `[ADD]` + 3 `[FIX]` → version MINEUR incrémentée.
+
+```bash
+git commit -m "[ADD] Ajout de la page recherche avancée"
+git commit -m "[FIX] Correction du bug d'authentification sur mobile"
+git commit -m "[REFACTOR] Centralisation du service d'appel API"
+git commit -m "[TEST] Ajout des tests unitaires du contrôleur messages"
+```
+
+Règle d'or : en lisant le message, on doit savoir exactement ce qui a changé.
+Un commit sans préfixe reconnu sera ignoré dans le CHANGELOG.
 
 ## Tests
 

@@ -1,0 +1,142 @@
+name: CHANGELOG — Mise à jour automatique
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-changelog:
+    name: Mise à jour du CHANGELOG et versionnage
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Générer la nouvelle version et le CHANGELOG
+        id: generate
+        run: |
+          python3 << 'EOF'
+          import subprocess, re, os
+          from datetime import date
+
+          # ── 1. Dernière version sémantique ──────────────────────────────────
+          result = subprocess.run(
+              ['git', 'tag', '--list', 'v[0-9]*.[0-9]*.[0-9]*', '--sort=-v:refname'],
+              capture_output=True, text=True
+          )
+          tags = [t for t in result.stdout.strip().split('\n') if t]
+          latest_tag = tags[0] if tags else None
+          current_version = latest_tag[1:] if latest_tag else '0.0.0'
+
+          # ── 2. Commits depuis le dernier tag ─────────────────────────────────
+          cmd = (['git', 'log', f'{latest_tag}..HEAD', '--pretty=format:%s']
+                 if latest_tag else ['git', 'log', '--pretty=format:%s'])
+          result = subprocess.run(cmd, capture_output=True, text=True)
+          commits = [c for c in result.stdout.strip().split('\n') if c]
+
+          if not commits:
+              print("Aucun nouveau commit à traiter.")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('skip=true\n')
+              exit(0)
+
+          # ── 3. Analyse des préfixes ──────────────────────────────────────────
+          PREFIX_MAP = {
+              '[BREAKING]': ('major',  'breaking'),
+              '[ADD]':      ('minor',  'added'),
+              '[FIX]':      ('patch',  'fixed'),
+              '[DESIGN]':   ('patch',  'modified'),
+              '[REFACTOR]': ('patch',  'refactored'),
+              '[DOCS]':     ('patch',  'docs'),
+              '[TEST]':     ('patch',  'tests'),
+          }
+          PRIORITY = {'none': 0, 'patch': 1, 'minor': 2, 'major': 3}
+
+          bump = 'none'
+          sections = {k: [] for k in ['breaking', 'added', 'fixed', 'modified', 'refactored', 'docs', 'tests']}
+
+          for commit in commits:
+              for prefix, (bump_type, section) in PREFIX_MAP.items():
+                  if commit.startswith(prefix):
+                      msg = commit[len(prefix):].strip()
+                      sections[section].append(msg)
+                      if PRIORITY[bump_type] > PRIORITY[bump]:
+                          bump = bump_type
+                      break
+
+          if bump == 'none':
+              print("Aucun commit avec préfixe reconnu — CHANGELOG inchangé.")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('skip=true\n')
+              exit(0)
+
+          # ── 4. Calcul de la nouvelle version ─────────────────────────────────
+          major, minor, patch = map(int, current_version.split('.'))
+          if bump == 'major':
+              major += 1; minor = 0; patch = 0
+          elif bump == 'minor':
+              minor += 1; patch = 0
+          else:
+              patch += 1
+          new_version = f'{major}.{minor}.{patch}'
+          today = date.today().strftime('%Y-%m-%d')
+
+          # ── 5. Construction de l'entrée CHANGELOG ────────────────────────────
+          SECTION_TITLES = {
+              'breaking':   '### Changements majeurs',
+              'added':      '### Ajouté',
+              'fixed':      '### Corrigé',
+              'modified':   '### Modifié',
+              'refactored': '### Refactorisé',
+              'docs':       '### Documentation',
+              'tests':      '### Tests',
+          }
+          lines = [f'## [{new_version}] - {today}', '']
+          for key in ['breaking', 'added', 'fixed', 'modified', 'refactored', 'docs', 'tests']:
+              if sections[key]:
+                  lines.append(SECTION_TITLES[key])
+                  lines.extend(f'- {item}' for item in sections[key])
+                  lines.append('')
+          new_entry = '\n'.join(lines)
+
+          # ── 6. Insertion dans CHANGELOG.md ───────────────────────────────────
+          marker = '<!-- entrées automatiques -->'
+          with open('CHANGELOG.md', 'r') as f:
+              content = f.read()
+
+          if marker in content:
+              content = content.replace(marker, f'{marker}\n\n{new_entry}', 1)
+          else:
+              content = re.sub(r'(# Changelog[^\n]*\n)', rf'\1\n{new_entry}\n', content, count=1)
+
+          with open('CHANGELOG.md', 'w') as f:
+              f.write(content)
+
+          print(f'✅ {current_version} → {new_version} ({bump})')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'new_version={new_version}\n')
+              f.write('skip=false\n')
+          EOF
+
+      - name: Committer le CHANGELOG mis à jour
+        if: steps.generate.outputs.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git diff --staged --quiet && echo "Rien à committer" || \
+            git commit -m "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}"
+          git push
+
+      - name: Créer le tag sémantique
+        if: steps.generate.outputs.skip != 'true'
+        run: |
+          git tag "v${{ steps.generate.outputs.new_version }}"
+          git push origin "v${{ steps.generate.outputs.new_version }}"
