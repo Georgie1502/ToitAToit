@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.2.2] - 2026-05-09
+
+### Refactorisé
+- Mettre à jour les horodatages de génération de couverture dans les rapports de couverture
+
+
 ## [0.2.1] - 2026-05-09
 
 ### Documentation
