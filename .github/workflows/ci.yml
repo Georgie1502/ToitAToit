@@ -28,6 +28,9 @@ jobs:
       - name: Installer les dépendances
         run: npm install
 
+      - name: Lint
+        run: npm run lint
+
       - name: Lancer les tests avec coverage
         run: npm test
 
@@ -58,6 +61,9 @@ jobs:
 
       - name: Installer les dépendances
         run: npm install
+
+      - name: Lint
+        run: npm run lint
 
       - name: Lancer les tests avec coverage
         run: npm test
@@ -90,6 +96,9 @@ jobs:
       - name: Installer les dépendances
         run: npm install
 
+      - name: Lint
+        run: npm run lint
+
       - name: Lancer les tests avec coverage
         run: npm test
 
@@ -120,6 +129,9 @@ jobs:
 
       - name: Installer les dépendances
         run: npm install
+
+      - name: Lint
+        run: npm run lint
 
       - name: Lancer les tests avec coverage
         run: npm test

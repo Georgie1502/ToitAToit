@@ -148,8 +148,27 @@ Conventional Commits :
 
 ## Tests
 
-- Frontend : `npm test` (React Testing Library / Jest).
-- Backend : ajouter des tests unitaires/integration par service (Jest ou autre). Documenter les commandes dans chaque README.
+Chaque service dispose de tests Jest dans un dossier `__tests__/`. La couverture minimale exigée est de 70 % (seuil configuré dans chaque `package.json`).
+
+| Service | Commande |
+|---|---|
+| Gateway | `cd backend/gateway && npm test` |
+| Users | `cd backend/users-service && npm test` |
+| Colocations | `cd backend/colocations-service && npm test` |
+| Messages | `cd backend/messages-service && npm test` |
+| Frontend | `cd frontend/toit-a-toit-frontend && npm test` |
+
+Les rapports de couverture HTML sont générés dans le dossier `coverage/` de chaque service.
+
+Pour lancer tous les tests en local (depuis la racine) :
+
+```bash
+(cd backend/gateway && npm test) && \
+(cd backend/users-service && npm test) && \
+(cd backend/colocations-service && npm test) && \
+(cd backend/messages-service && npm test) && \
+(cd frontend/toit-a-toit-frontend && npm test -- --watchAll=false)
+```
 
 ## Securite et contribution
 
@@ -159,7 +178,10 @@ Conventional Commits :
 
 ## CI/CD
 
-- A definir : pipeline GitHub Actions (tests + build images) dans `.github/workflows/`.
+Deux pipelines GitHub Actions dans `.github/workflows/` :
+
+- **CI** (`ci.yml`) : déclenché sur chaque push et PR vers `main`. Lance les tests Jest avec coverage pour chacun des 4 services backend et le frontend. Les rapports de couverture sont archivés comme artefacts Actions.
+- **CD** (`cd.yml`) : déclenché sur les merges dans `main`. Construit et publie les images Docker (stage `production`) sur GitHub Container Registry (`ghcr.io`). Génère un tag de version sémantique `vYYYY.MM.DD-<sha>` et effectue un smoke test sur `/api/health` si `DEPLOY_URL` est configuré.
 
 ## Licence
 
