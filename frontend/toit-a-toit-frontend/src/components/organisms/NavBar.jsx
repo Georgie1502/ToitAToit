@@ -9,13 +9,17 @@ const NavBar = () => {
   const user = getCurrentUser();
   const navigate = useNavigate();
 
-  const navLinks = [
-    { label: 'Rechercher', to: '/recherche' },
-    { label: 'Comment ça marche', to: '/onboarding' },
-    { label: 'Sécurité', to: '/securite' },
-    ...(user ? [{ label: 'Mes annonces', to: '/mes-annonces' }] : []),
-    ...(user ? [{ label: 'Mes demandes', to: '/mes-demandes' }] : []),
-  ];
+  const isAssociation = user?.role === 'ASSOCIATION';
+
+  const navLinks = isAssociation
+    ? [{ label: 'Tableau de bord', to: '/admin' }]
+    : [
+        { label: 'Rechercher', to: '/recherche' },
+        { label: 'Comment ça marche', to: '/onboarding' },
+        { label: 'Sécurité', to: '/securite' },
+        ...(user ? [{ label: 'Mes annonces', to: '/mes-annonces' }] : []),
+        ...(user ? [{ label: 'Mes demandes', to: '/mes-demandes' }] : []),
+      ];
 
   const handleLogout = async () => {
     await logout();
@@ -41,15 +45,15 @@ const NavBar = () => {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          {user ? (
+          {user && !isAssociation ? (
             <Button as={NavLink} size="sm" variant="secondary" to="/publier">
               Publier une annonce
             </Button>
-          ) : (
+          ) : !user ? (
             <Button as={NavLink} size="sm" variant="secondary" to="/login">
               Connexion
             </Button>
-          )}
+          ) : null}
           {user ? (
             <Button size="sm" variant="ghost" type="button" onClick={handleLogout}>
               Déconnexion

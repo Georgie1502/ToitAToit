@@ -24,6 +24,17 @@ const upload = multer({
   limits: { fileSize: 8 * 1024 * 1024, files: 10 },
 });
 
+const requireAssociation = (req, res, next) => {
+  if (req.userRole !== "ASSOCIATION") {
+    return res.status(403).json({ message: "Reserve a l'association" });
+  }
+  return next();
+};
+
+// Admin — association only
+router.get("/admin/listings", authMiddleware, requireAssociation, colocationsController.listPendingListings);
+router.patch("/admin/listings/:id/status", authMiddleware, requireAssociation, colocationsController.updateListingStatus);
+
 router.get("/", colocationsController.listListings);
 router.get("/search/location", colocationsController.searchByLocation);
 

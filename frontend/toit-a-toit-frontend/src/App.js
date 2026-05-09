@@ -1,5 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { NavBar } from './components';
+import AdminCandidatures from './pages/AdminCandidatures';
+import AdminDashboard from './pages/AdminDashboard';
 import DemandesAnnonce from './pages/DemandesAnnonce';
 import Home from './pages/Home';
 import ListingDetails from './pages/ListingDetails';
@@ -19,9 +21,14 @@ import { getCurrentUser } from './services/auth';
 
 const RequireAuth = ({ children }) => {
   const user = getCurrentUser();
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
+
+const RequireAssociation = ({ children }) => {
+  const user = getCurrentUser();
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== 'ASSOCIATION') return <Navigate to="/" replace />;
   return children;
 };
 
@@ -110,6 +117,22 @@ function App() {
                 <RequireAuth>
                   <MesDemandes />
                 </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <RequireAssociation>
+                  <AdminDashboard />
+                </RequireAssociation>
+              }
+            />
+            <Route
+              path="/admin/annonces/:id/candidatures"
+              element={
+                <RequireAssociation>
+                  <AdminCandidatures />
+                </RequireAssociation>
               }
             />
             <Route path="/securite" element={<Securite />} />

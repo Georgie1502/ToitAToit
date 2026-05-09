@@ -1,4 +1,5 @@
 export { default as AuthField } from './AuthField';
+export { default as CandidatureModal } from './CandidatureModal';
 export { default as FeatureCard } from './FeatureCard';
 export { default as InfoTile } from './InfoTile';
 export { default as ListingCard } from './ListingCard';

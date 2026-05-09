@@ -52,7 +52,10 @@ exports.listApplicationsForListing = async (req, res) => {
     if (listing.rows.length === 0) {
       return res.status(404).json({ message: "Annonce introuvable" });
     }
-    if (listing.rows[0].owner_user_id !== userId) {
+
+    const isOwner = listing.rows[0].owner_user_id === userId;
+    const isAssociation = req.userRole === "ASSOCIATION";
+    if (!isOwner && !isAssociation) {
       return res.status(403).json({ message: "Interdit" });
     }
 
@@ -146,24 +149,15 @@ exports.updateApplicationStatus = async (req, res) => {
     }
     const application = appResult.rows[0];
 
-    const listing = await pool.query(
-      "SELECT owner_user_id FROM listings WHERE id = $1",
-      [application.listing_id],
-    );
-    if (listing.rows.length === 0) {
-      return res.status(404).json({ message: "Annonce introuvable" });
-    }
-    const ownerUserId = listing.rows[0].owner_user_id;
-
     const isApplicant = userId === application.applicant_user_id;
-    const isOwner = userId === ownerUserId;
+    const isAssociation = req.userRole === "ASSOCIATION";
 
-    if (!isApplicant && !isOwner) {
+    if (!isApplicant && !isAssociation) {
       return res.status(403).json({ message: "Interdit" });
     }
 
-    // Applicant can only withdraw (and only from SENT).
-    if (isApplicant) {
+    // Applicant can only withdraw their own application (only from SENT).
+    if (isApplicant && !isAssociation) {
       if (newStatus !== "WITHDRAWN") {
         return res.status(403).json({ message: "Interdit" });
       }
@@ -172,8 +166,8 @@ exports.updateApplicationStatus = async (req, res) => {
       }
     }
 
-    // Owner can accept/reject (only from SENT).
-    if (isOwner && !isApplicant) {
+    // Association selects or rejects (only from SENT).
+    if (isAssociation) {
       if (newStatus !== "ACCEPTED" && newStatus !== "REJECTED") {
         return res.status(403).json({ message: "Interdit" });
       }
