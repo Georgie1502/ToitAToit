@@ -4,7 +4,7 @@ const { RATE_LIMIT } = require('../config/services');
 // Rate limiter global
 const rateLimiter = rateLimit({
   windowMs: RATE_LIMIT.windowMs,
-  max: RATE_LIMIT.max,
+  max: process.env.NODE_ENV === 'production' ? RATE_LIMIT.max : 1000,
   message: {
     success: false,
     message: RATE_LIMIT.message

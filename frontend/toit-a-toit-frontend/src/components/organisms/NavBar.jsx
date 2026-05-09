@@ -10,15 +10,21 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const isAssociation = user?.role === 'ASSOCIATION';
+  const isOwner = user?.role === 'OWNER';
+  const isSeeker = user?.role === 'SEEKER';
 
   const navLinks = isAssociation
-    ? [{ label: 'Tableau de bord', to: '/admin' }]
+    ? [
+        { label: 'Tableau de bord', to: '/admin' },
+        { label: 'Messages', to: '/messages' },
+      ]
     : [
         { label: 'Rechercher', to: '/recherche' },
         { label: 'Comment ça marche', to: '/onboarding' },
         { label: 'Sécurité', to: '/securite' },
-        ...(user ? [{ label: 'Mes annonces', to: '/mes-annonces' }] : []),
-        ...(user ? [{ label: 'Mes demandes', to: '/mes-demandes' }] : []),
+        ...(isOwner ? [{ label: 'Mes annonces', to: '/mes-annonces' }] : []),
+        ...(isSeeker ? [{ label: 'Mes demandes', to: '/mes-demandes' }] : []),
+        ...(user ? [{ label: 'Messages', to: '/messages' }] : []),
       ];
 
   const handleLogout = async () => {
@@ -45,7 +51,7 @@ const NavBar = () => {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          {user && !isAssociation ? (
+          {isOwner ? (
             <Button as={NavLink} size="sm" variant="secondary" to="/publier">
               Publier une annonce
             </Button>
@@ -64,8 +70,8 @@ const NavBar = () => {
         <div className="flex items-center gap-2 md:hidden">
           {user ? (
             <>
-              <NavLink className={linkBase} to={isAssociation ? '/admin' : '/mes-annonces'}>
-                {isAssociation ? 'Tableau de bord' : 'Mes annonces'}
+              <NavLink className={linkBase} to={isAssociation ? '/admin' : isOwner ? '/mes-annonces' : '/mes-demandes'}>
+                {isAssociation ? 'Tableau de bord' : isOwner ? 'Mes annonces' : 'Mes demandes'}
               </NavLink>
               <Button size="sm" variant="ghost" type="button" onClick={handleLogout}>
                 Déconnexion
