@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
 import { rejectApplication, selectCandidate } from '../services/admin';
 import { listApplicationsForListing } from '../services/applications';
+import { sendMessage } from '../services/messages';
 import { getApplicantProfile } from '../services/users';
 
 const statusConfig = {
@@ -170,6 +171,70 @@ const ProfileModal = ({ userId, onClose }) => {
   );
 };
 
+const ContactModal = ({ app, listingId, onClose, onSent }) => {
+  const [body, setBody] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  const textareaRef = useRef(null);
+
+  useEffect(() => { textareaRef.current?.focus(); }, []);
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === 'Escape') closeRef.current(); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!body.trim() || sending) return;
+    setSending(true);
+    setError('');
+    try {
+      const msg = await sendMessage({ body: body.trim(), recipient_user_id: app.applicant_user_id, listing_id: listingId });
+      onSent();
+      navigate(`/messages/${msg.conversation_id}`);
+    } catch {
+      setError("Impossible d'envoyer le message.");
+      setSending(false);
+    }
+  };
+
+  return (
+    <div role="dialog" aria-modal="true" aria-label="Contacter le candidat" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-ink/30 backdrop-blur-sm" />
+      <div className="relative w-full max-w-md rounded-3xl bg-background shadow-[0_32px_64px_rgba(38,48,53,0.18)]">
+        <div className="flex items-center justify-between border-b border-ink/5 px-6 py-5">
+          <h3 className="font-display text-xl text-ink">Contacter le candidat</h3>
+          <button type="button" aria-label="Fermer" onClick={onClose} className="rounded-full p-1.5 text-muted transition hover:bg-surfaceContainer hover:text-ink">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <form onSubmit={handleSend} className="p-6 space-y-4">
+          <p className="font-body text-sm text-muted">Envoyez un message au candidat retenu pour organiser la suite.</p>
+          <textarea
+            ref={textareaRef}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={4}
+            placeholder="Bonjour, votre candidature a été retenue…"
+            className="w-full resize-none rounded-2xl border-none bg-surfaceContainer px-4 py-3 font-body text-sm text-ink placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primaryContainer"
+          />
+          {error ? <p className="font-body text-xs text-danger">{error}</p> : null}
+          <div className="flex justify-end gap-2">
+            <Button type="button" size="sm" variant="ghost" onClick={onClose}>Annuler</Button>
+            <Button type="submit" size="sm" variant="primary" disabled={!body.trim() || sending}>
+              {sending ? 'Envoi…' : 'Envoyer'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const AdminCandidatures = () => {
   const { id } = useParams();
   const [applications, setApplications] = useState([]);
@@ -177,6 +242,7 @@ const AdminCandidatures = () => {
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(null);
   const [profileUserId, setProfileUserId] = useState(null);
+  const [contactApp, setContactApp] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -221,6 +287,14 @@ const AdminCandidatures = () => {
     <PageShell>
       {profileUserId ? (
         <ProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
+      ) : null}
+      {contactApp ? (
+        <ContactModal
+          app={contactApp}
+          listingId={id}
+          onClose={() => setContactApp(null)}
+          onSent={() => setContactApp(null)}
+        />
       ) : null}
 
       <div className="mx-auto max-w-4xl space-y-8">
@@ -330,6 +404,15 @@ const AdminCandidatures = () => {
                           >
                             Profil
                           </button>
+                          {app.status === 'ACCEPTED' ? (
+                            <button
+                              type="button"
+                              onClick={() => setContactApp(app)}
+                              className="font-body text-xs text-primary underline-offset-2 hover:underline"
+                            >
+                              Contacter
+                            </button>
+                          ) : null}
                           <span className={`rounded-full px-3 py-0.5 font-body text-xs font-semibold ${status.className}`}>
                             {status.label}
                           </span>

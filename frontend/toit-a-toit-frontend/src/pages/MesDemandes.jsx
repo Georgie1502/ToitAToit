@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
 import { listMyApplications, updateApplicationStatus } from '../services/applications';
+import { listConversations } from '../services/messages';
 
 const statusConfig = {
   SENT: { label: 'En attente', className: 'bg-secondaryContainer/50 text-ink' },
@@ -13,6 +14,7 @@ const statusConfig = {
 
 const MesDemandes = () => {
   const [applications, setApplications] = useState([]);
+  const [conversationsByListing, setConversationsByListing] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(null);
@@ -23,8 +25,16 @@ const MesDemandes = () => {
       setLoading(true);
       setError('');
       try {
-        const data = await listMyApplications();
-        if (isMounted) setApplications(data);
+        const [appsData, convsData] = await Promise.all([
+          listMyApplications(),
+          listConversations(),
+        ]);
+        if (isMounted) {
+          setApplications(appsData);
+          const byListing = {};
+          convsData.forEach((c) => { if (c.listing_id) byListing[c.listing_id] = c.id; });
+          setConversationsByListing(byListing);
+        }
       } catch {
         if (isMounted) setError('Impossible de charger vos demandes.');
       } finally {
@@ -104,6 +114,11 @@ const MesDemandes = () => {
                       <Button as={Link} to={`/annonces/${app.listing_id}`} size="sm" variant="ghost">
                         Voir l'annonce
                       </Button>
+                      {app.status === 'ACCEPTED' && conversationsByListing[app.listing_id] ? (
+                        <Button as={Link} to={`/messages/${conversationsByListing[app.listing_id]}`} size="sm" variant="primary">
+                          Voir les messages
+                        </Button>
+                      ) : null}
                       {app.status === 'SENT' ? (
                         <Button type="button" size="sm" variant="ghost" onClick={() => handleWithdraw(app.id)} disabled={withdrawing === app.id}>
                           {withdrawing === app.id ? 'Retrait...' : 'Retirer'}
