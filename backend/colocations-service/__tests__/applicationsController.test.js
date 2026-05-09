@@ -182,10 +182,9 @@ describe("applicationsController.updateApplicationStatus", () => {
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("retourne 403 si l'utilisateur n'est ni candidat ni propriétaire", async () => {
+  it("retourne 403 si l'utilisateur n'est ni candidat ni association", async () => {
     pool.query
-      .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] })
-      .mockResolvedValueOnce({ rows: [{ owner_user_id: "uuid-owner" }] });
+      .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] });
 
     const req = { params: { applicationId: "app-1" }, userId: "uuid-stranger", body: { status: "WITHDRAWN" } };
     const res = mockRes();
@@ -198,7 +197,6 @@ describe("applicationsController.updateApplicationStatus", () => {
     const updated = { id: "app-1", status: "WITHDRAWN" };
     pool.query
       .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] })
-      .mockResolvedValueOnce({ rows: [{ owner_user_id: "uuid-owner" }] })
       .mockResolvedValueOnce({ rows: [updated] });
 
     const req = { params: { applicationId: "app-1" }, userId: "uuid-applicant", body: { status: "WITHDRAWN" } };
@@ -210,8 +208,7 @@ describe("applicationsController.updateApplicationStatus", () => {
 
   it("le candidat ne peut pas mettre un statut ACCEPTED", async () => {
     pool.query
-      .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] })
-      .mockResolvedValueOnce({ rows: [{ owner_user_id: "uuid-owner" }] });
+      .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] });
 
     const req = { params: { applicationId: "app-1" }, userId: "uuid-applicant", body: { status: "ACCEPTED" } };
     const res = mockRes();
@@ -220,40 +217,37 @@ describe("applicationsController.updateApplicationStatus", () => {
     expect(res.status).toHaveBeenCalledWith(403);
   });
 
-  it("le propriétaire peut accepter une candidature (ACCEPTED)", async () => {
+  it("l'association peut accepter une candidature (ACCEPTED)", async () => {
     const updated = { id: "app-1", status: "ACCEPTED" };
     pool.query
       .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] })
-      .mockResolvedValueOnce({ rows: [{ owner_user_id: "uuid-owner" }] })
       .mockResolvedValueOnce({ rows: [updated] });
 
-    const req = { params: { applicationId: "app-1" }, userId: "uuid-owner", body: { status: "ACCEPTED" } };
+    const req = { params: { applicationId: "app-1" }, userId: "uuid-association", userRole: "ASSOCIATION", body: { status: "ACCEPTED" } };
     const res = mockRes();
     await applicationsController.updateApplicationStatus(req, res);
 
     expect(res.json).toHaveBeenCalledWith({ application: updated });
   });
 
-  it("le propriétaire peut rejeter une candidature (REJECTED)", async () => {
+  it("l'association peut rejeter une candidature (REJECTED)", async () => {
     const updated = { id: "app-1", status: "REJECTED" };
     pool.query
       .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "SENT" }] })
-      .mockResolvedValueOnce({ rows: [{ owner_user_id: "uuid-owner" }] })
       .mockResolvedValueOnce({ rows: [updated] });
 
-    const req = { params: { applicationId: "app-1" }, userId: "uuid-owner", body: { status: "REJECTED" } };
+    const req = { params: { applicationId: "app-1" }, userId: "uuid-association", userRole: "ASSOCIATION", body: { status: "REJECTED" } };
     const res = mockRes();
     await applicationsController.updateApplicationStatus(req, res);
 
     expect(res.json).toHaveBeenCalledWith({ application: updated });
   });
 
-  it("retourne 400 si candidature déjà traitée (statut non SENT) pour le propriétaire", async () => {
+  it("retourne 400 si candidature déjà traitée (statut non SENT) pour l'association", async () => {
     pool.query
-      .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "ACCEPTED" }] })
-      .mockResolvedValueOnce({ rows: [{ owner_user_id: "uuid-owner" }] });
+      .mockResolvedValueOnce({ rows: [{ id: "app-1", listing_id: "l-1", applicant_user_id: "uuid-applicant", status: "ACCEPTED" }] });
 
-    const req = { params: { applicationId: "app-1" }, userId: "uuid-owner", body: { status: "REJECTED" } };
+    const req = { params: { applicationId: "app-1" }, userId: "uuid-association", userRole: "ASSOCIATION", body: { status: "REJECTED" } };
     const res = mockRes();
     await applicationsController.updateApplicationStatus(req, res);
 
