@@ -33,6 +33,7 @@ const requireAssociation = (req, res, next) => {
 
 // Admin — association only
 router.get("/admin/listings", authMiddleware, requireAssociation, colocationsController.listPendingListings);
+router.get("/admin/published-listings", authMiddleware, requireAssociation, colocationsController.listPublishedListingsWithApplications);
 router.patch("/admin/listings/:id/status", authMiddleware, requireAssociation, colocationsController.updateListingStatus);
 
 router.get("/", colocationsController.listListings);

@@ -21,6 +21,7 @@ const authMiddleware = (req, res, next) => {
     }
     const decoded = verifyToken(token);
     req.userId = decoded.userId;
+    req.userRole = decoded.role || null;
     next();
   } catch (error) {
     res.status(403).json({ success: false, message: "Invalid token" }); 

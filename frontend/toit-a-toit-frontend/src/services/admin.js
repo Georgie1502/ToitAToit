@@ -5,6 +5,11 @@ export const listPendingListings = async () => {
   return response.data?.listings || [];
 };
 
+export const listPublishedListings = async () => {
+  const response = await api.get('/api/colocations/admin/published-listings');
+  return response.data?.listings || [];
+};
+
 export const updateListingStatus = async (listingId, status) => {
   const response = await api.patch(`/api/colocations/admin/listings/${listingId}/status`, { status });
   return response.data?.listing;

@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { NavBar } from './components';
 import AdminCandidatures from './pages/AdminCandidatures';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminListingDetail from './pages/AdminListingDetail';
 import DemandesAnnonce from './pages/DemandesAnnonce';
 import Home from './pages/Home';
 import ListingDetails from './pages/ListingDetails';
@@ -124,6 +125,14 @@ function App() {
               element={
                 <RequireAssociation>
                   <AdminDashboard />
+                </RequireAssociation>
+              }
+            />
+            <Route
+              path="/admin/annonces/:id"
+              element={
+                <RequireAssociation>
+                  <AdminListingDetail />
                 </RequireAssociation>
               }
             />

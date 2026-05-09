@@ -77,6 +77,7 @@ exports.getMyProfile = async (req, res) => {
         p.occupation_status,
         p.role,
         p.bio,
+        p.phone,
         p.created_at AS profile_created_at,
         p.updated_at AS profile_updated_at,
         pref.user_id AS preferences_user_id,
@@ -110,6 +111,7 @@ exports.getMyProfile = async (req, res) => {
             occupation_status: row.occupation_status,
             role: row.role,
             bio: row.bio,
+            phone: row.phone,
             created_at: row.profile_created_at,
             updated_at: row.profile_updated_at,
           };
@@ -155,6 +157,7 @@ exports.upsertMyProfile = async (req, res) => {
     const occupationStatus = req.body.occupation_status || null;
     const role = req.body.role || null;
     const bio = req.body.bio || null;
+    const phone = req.body.phone || null;
 
     const allowedRoles = new Set(["OWNER", "SEEKER"]);
     if (role !== null && !allowedRoles.has(role)) {
@@ -162,19 +165,52 @@ exports.upsertMyProfile = async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO profiles (user_id, birth_date, gender, occupation_status, role, bio)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO profiles (user_id, birth_date, gender, occupation_status, role, bio, phone)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       ON CONFLICT (user_id) DO UPDATE
       SET birth_date = EXCLUDED.birth_date,
           gender = EXCLUDED.gender,
           occupation_status = EXCLUDED.occupation_status,
           role = EXCLUDED.role,
-          bio = EXCLUDED.bio
-      RETURNING user_id, birth_date, gender, occupation_status, role, bio, created_at, updated_at`,
-      [userId, birthDate, gender, occupationStatus, role, bio],
+          bio = EXCLUDED.bio,
+          phone = EXCLUDED.phone
+      RETURNING user_id, birth_date, gender, occupation_status, role, bio, phone, created_at, updated_at`,
+      [userId, birthDate, gender, occupationStatus, role, bio, phone],
     );
 
     return res.json({ profile: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+exports.getProfileById = async (req, res) => {
+  if (req.userRole !== "ASSOCIATION") {
+    return res.status(403).json({ message: "Reserve a l'association" });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT
+        u.id AS user_id, u.username, u.email, u.created_at AS user_created_at,
+        p.birth_date, p.gender, p.occupation_status, p.bio, p.phone,
+        pref.budget_min, pref.budget_max, pref.location,
+        pref.smoking, pref.pets, pref.noise_level, pref.guests_policy, pref.lifestyle_notes
+      FROM users u
+      LEFT JOIN profiles p ON p.user_id = u.id
+      LEFT JOIN profile_preferences pref ON pref.user_id = u.id
+      WHERE u.id = $1`,
+      [req.params.id],
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+    const row = result.rows[0];
+    return res.json({
+      user: { id: row.user_id, username: row.username, email: row.email, created_at: row.user_created_at },
+      profile: { birth_date: row.birth_date, gender: row.gender, occupation_status: row.occupation_status, bio: row.bio, phone: row.phone },
+      preferences: { budget_min: row.budget_min, budget_max: row.budget_max, location: row.location, smoking: row.smoking, pets: row.pets, noise_level: row.noise_level, guests_policy: row.guests_policy, lifestyle_notes: row.lifestyle_notes },
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur" });
