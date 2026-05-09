@@ -87,6 +87,9 @@ exports.applyToListing = async (req, res) => {
     if (listing.rows.length === 0) {
       return res.status(404).json({ message: "Annonce introuvable" });
     }
+    if (listing.rows[0].status !== "PUBLISHED") {
+      return res.status(400).json({ message: "Cette annonce n'est pas disponible" });
+    }
     if (listing.rows[0].owner_user_id === userId) {
       return res.status(400).json({ message: "Tu ne peux pas candidater a ta propre annonce" });
     }

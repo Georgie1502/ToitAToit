@@ -35,6 +35,13 @@ const RequireAssociation = ({ children }) => {
   return children;
 };
 
+const RequireRole = ({ role, children }) => {
+  const user = getCurrentUser();
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== role) return <Navigate to="/" replace />;
+  return children;
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -49,9 +56,9 @@ function App() {
             <Route
               path="/publier"
               element={
-                <RequireAuth>
+                <RequireRole role="OWNER">
                   <PublierAnnonce />
-                </RequireAuth>
+                </RequireRole>
               }
             />
             <Route path="/publish" element={<Navigate to="/publier" replace />} />
@@ -93,9 +100,9 @@ function App() {
             <Route
               path="/mes-annonces"
               element={
-                <RequireAuth>
+                <RequireRole role="OWNER">
                   <MyListings />
-                </RequireAuth>
+                </RequireRole>
               }
             />
             <Route
@@ -109,17 +116,17 @@ function App() {
             <Route
               path="/annonces/:id/demandes"
               element={
-                <RequireAuth>
+                <RequireRole role="OWNER">
                   <DemandesAnnonce />
-                </RequireAuth>
+                </RequireRole>
               }
             />
             <Route
               path="/mes-demandes"
               element={
-                <RequireAuth>
+                <RequireRole role="SEEKER">
                   <MesDemandes />
-                </RequireAuth>
+                </RequireRole>
               }
             />
             <Route
