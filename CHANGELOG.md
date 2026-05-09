@@ -9,6 +9,19 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.2.0] - 2026-05-09
+
+### Ajouté
+- ajouter un workflow GitHub Actions pour la mise à jour automatique du CHANGELOG
+- ajouter les package-lock.json pour gérer les dépendances et garantir des installations cohérentes
+
+### Corrigé
+- corriger le filtrage des tags pour la version sémantique dans le workflow CHANGELOG
+- mettre à jour les métriques et rapports de couverture de code
+- : mettre à jour la navigation et améliorer la gestion des candidatures dans l'administration
+- Refornt de la page d'accueil
+
+
 ## [0.1.0] - 2026-05-09
 
 ### Ajouté
