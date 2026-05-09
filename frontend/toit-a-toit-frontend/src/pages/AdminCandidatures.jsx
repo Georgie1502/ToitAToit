@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
 import { rejectApplication, selectCandidate } from '../services/admin';
 import { listApplicationsForListing } from '../services/applications';
+import { getApplicantProfile } from '../services/users';
 
 const statusConfig = {
   SENT: { label: 'En attente', className: 'bg-secondaryContainer/50 text-ink' },
@@ -12,8 +13,162 @@ const statusConfig = {
   WITHDRAWN: { label: 'Retiré', className: 'bg-surfaceContainer text-muted' },
 };
 
+const occupationLabels = { STUDENT: 'Étudiant·e', PRO: 'En activité', OTHER: 'Autre' };
+const genderLabels = { F: 'Femme', M: 'Homme', NON_BINARY: 'Non-binaire', OTHER: 'Autre' };
+
 const formatDate = (value) =>
   new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const ProfileModal = ({ userId, onClose }) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+
+  useEffect(() => {
+    getApplicantProfile(userId)
+      .then(setData)
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, [userId]);
+
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === 'Escape') closeRef.current(); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Profil du candidat"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div className="absolute inset-0 bg-ink/30 backdrop-blur-sm" />
+      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl bg-background shadow-[0_32px_64px_rgba(38,48,53,0.18)]">
+        <div className="flex items-center justify-between border-b border-ink/5 px-6 py-5">
+          <h3 className="font-display text-xl text-ink">Profil du candidat</h3>
+          <button
+            type="button"
+            aria-label="Fermer"
+            onClick={onClose}
+            className="rounded-full p-1.5 text-muted transition hover:bg-surfaceContainer hover:text-ink"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="p-6 space-y-5">
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => <div key={i} className="h-10 animate-pulse rounded-2xl bg-surfaceContainer" />)}
+            </div>
+          ) : !data ? (
+            <p className="font-body text-sm text-muted">Impossible de charger le profil.</p>
+          ) : (
+            <>
+              <section className="space-y-3">
+                <p className="font-body text-xs font-semibold uppercase tracking-widest text-primary">Identité</p>
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-2 font-body text-sm">
+                  <dt className="text-muted">Nom</dt>
+                  <dd className="font-semibold text-ink">{data.user.username}</dd>
+                  <dt className="text-muted">Email</dt>
+                  <dd className="text-ink break-all">{data.user.email}</dd>
+                  {data.profile?.phone ? (
+                    <>
+                      <dt className="text-muted">Téléphone</dt>
+                      <dd className="text-ink">
+                        <a href={`tel:${data.profile.phone}`} className="font-semibold text-primary hover:underline">
+                          {data.profile.phone}
+                        </a>
+                      </dd>
+                    </>
+                  ) : null}
+                  {data.profile?.birth_date ? (
+                    <>
+                      <dt className="text-muted">Date de naissance</dt>
+                      <dd className="text-ink">{formatDate(data.profile.birth_date)}</dd>
+                    </>
+                  ) : null}
+                  {data.profile?.gender ? (
+                    <>
+                      <dt className="text-muted">Genre</dt>
+                      <dd className="text-ink">{genderLabels[data.profile.gender] || data.profile.gender}</dd>
+                    </>
+                  ) : null}
+                  {data.profile?.occupation_status ? (
+                    <>
+                      <dt className="text-muted">Statut</dt>
+                      <dd className="text-ink">{occupationLabels[data.profile.occupation_status] || data.profile.occupation_status}</dd>
+                    </>
+                  ) : null}
+                </dl>
+                {data.profile?.bio ? (
+                  <p className="rounded-2xl bg-surfaceContainer px-4 py-3 font-body text-sm italic text-ink">
+                    "{data.profile.bio}"
+                  </p>
+                ) : null}
+              </section>
+
+              {data.preferences && Object.values(data.preferences).some(Boolean) ? (
+                <section className="space-y-3">
+                  <p className="font-body text-xs font-semibold uppercase tracking-widest text-primary">Préférences</p>
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-2 font-body text-sm">
+                    {data.preferences.budget_min || data.preferences.budget_max ? (
+                      <>
+                        <dt className="text-muted">Budget</dt>
+                        <dd className="text-ink">
+                          {data.preferences.budget_min ? `${data.preferences.budget_min} €` : '—'}
+                          {' → '}
+                          {data.preferences.budget_max ? `${data.preferences.budget_max} €` : '—'}
+                        </dd>
+                      </>
+                    ) : null}
+                    {data.preferences.location ? (
+                      <>
+                        <dt className="text-muted">Localisation</dt>
+                        <dd className="text-ink">{data.preferences.location}</dd>
+                      </>
+                    ) : null}
+                    {data.preferences.smoking ? (
+                      <>
+                        <dt className="text-muted">Tabac</dt>
+                        <dd className="text-ink">{{ NO: 'Non-fumeur·se', YES: 'Fumeur·se', OUTSIDE_ONLY: 'Extérieur seulement' }[data.preferences.smoking] || data.preferences.smoking}</dd>
+                      </>
+                    ) : null}
+                    {data.preferences.pets ? (
+                      <>
+                        <dt className="text-muted">Animaux</dt>
+                        <dd className="text-ink">{{ NO: 'Pas d\'animaux', YES: 'En a', OK_WITH_PETS: 'Ok avec animaux' }[data.preferences.pets] || data.preferences.pets}</dd>
+                      </>
+                    ) : null}
+                    {data.preferences.noise_level ? (
+                      <>
+                        <dt className="text-muted">Ambiance</dt>
+                        <dd className="text-ink">{{ CALM: 'Calme', NORMAL: 'Normal', FESTIVE: 'Festif' }[data.preferences.noise_level] || data.preferences.noise_level}</dd>
+                      </>
+                    ) : null}
+                    {data.preferences.guests_policy ? (
+                      <>
+                        <dt className="text-muted">Invités</dt>
+                        <dd className="text-ink">{{ NO: 'Pas d\'invités', OCCASIONAL: 'Occasionnels', OK: 'Bienvenus' }[data.preferences.guests_policy] || data.preferences.guests_policy}</dd>
+                      </>
+                    ) : null}
+                  </dl>
+                </section>
+              ) : null}
+
+              <div className="pt-2 text-center">
+                <p className="font-body text-xs text-muted">Membre depuis {formatDate(data.user.created_at)}</p>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AdminCandidatures = () => {
   const { id } = useParams();
@@ -21,6 +176,7 @@ const AdminCandidatures = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(null);
+  const [profileUserId, setProfileUserId] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -63,6 +219,10 @@ const AdminCandidatures = () => {
 
   return (
     <PageShell>
+      {profileUserId ? (
+        <ProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
+      ) : null}
+
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
@@ -116,6 +276,14 @@ const AdminCandidatures = () => {
                             type="button"
                             size="sm"
                             variant="ghost"
+                            onClick={() => setProfileUserId(app.applicant_user_id)}
+                          >
+                            Voir le profil
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
                             onClick={() => handleAction(app.id, rejectApplication)}
                             disabled={updating === app.id}
                           >
@@ -148,13 +316,24 @@ const AdminCandidatures = () => {
                     const status = statusConfig[app.status] || { label: app.status, className: 'bg-surfaceContainer text-muted' };
                     return (
                       <li key={app.id} className="flex items-center justify-between rounded-3xl bg-surface px-6 py-4 shadow-soft">
-                        <p className="font-body text-sm text-muted">
-                          {formatDate(app.created_at)}
-                          {app.message ? ` — "${app.message.slice(0, 60)}${app.message.length > 60 ? '…' : ''}"` : ''}
-                        </p>
-                        <span className={`rounded-full px-3 py-0.5 font-body text-xs font-semibold ${status.className}`}>
-                          {status.label}
-                        </span>
+                        <div className="space-y-0.5">
+                          <p className="font-body text-sm text-muted">
+                            {formatDate(app.created_at)}
+                            {app.message ? ` — "${app.message.slice(0, 60)}${app.message.length > 60 ? '…' : ''}"` : ''}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setProfileUserId(app.applicant_user_id)}
+                            className="font-body text-xs text-muted underline-offset-2 hover:text-ink hover:underline"
+                          >
+                            Profil
+                          </button>
+                          <span className={`rounded-full px-3 py-0.5 font-body text-xs font-semibold ${status.className}`}>
+                            {status.label}
+                          </span>
+                        </div>
                       </li>
                     );
                   })}

@@ -62,7 +62,7 @@ const PublierAnnonce = () => {
   const [formData, setFormData] = useState({
     title: '', description: '', rent_amount: '', charges_included: false,
     surface_m2: '', housing_type: '', available_from: '', available_to: '',
-    min_duration_months: '', status: 'PUBLISHED',
+    min_duration_months: '',
     city: '', postal_code: '', address: '',
     coloc_type: '', atmosphere: '', smoking: '', pets: '', noise_level: '',
     guests_policy: '', preferred_gender: '', photo_urls: '',
@@ -87,7 +87,7 @@ const PublierAnnonce = () => {
     setter((prev) => prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]);
   };
 
-  const submitListing = async (targetStatus) => {
+  const submitListing = async () => {
     setError('');
     if (!formData.title || !formData.description || !formData.rent_amount || !formData.available_from)
       return setError('Merci de compléter les champs obligatoires : titre, description, loyer et disponibilité.');
@@ -97,7 +97,6 @@ const PublierAnnonce = () => {
       return setError('Merci de sélectionner un type de logement.');
     setLoading(true);
     try {
-      const status = targetStatus || formData.status;
       const payload = new FormData();
       [
         ['title', formData.title],
@@ -109,7 +108,6 @@ const PublierAnnonce = () => {
         ['available_from', formData.available_from],
         ['available_to', formData.available_to || ''],
         ['min_duration_months', formData.min_duration_months || ''],
-        ['status', status],
         ['city', formData.city],
         ['postal_code', formData.postal_code],
         ['address', formData.address || ''],
@@ -120,7 +118,7 @@ const PublierAnnonce = () => {
       await createListing(payload);
       navigate('/mes-annonces');
     } catch (err) {
-      setError(err.response?.data?.message || "Impossible de publier l'annonce.");
+      setError(err.response?.data?.message || "Impossible de soumettre l'annonce.");
     } finally {
       setLoading(false);
     }
@@ -141,7 +139,7 @@ const PublierAnnonce = () => {
                 Publier une annonce
               </h1>
               <p className="max-w-2xl font-body text-lg text-muted md:text-xl">
-                Décrivez votre logement et le profil de colocataire que vous recherchez.
+                Décrivez votre logement et le profil de colocataire que vous recherchez. Votre annonce sera soumise à l'association pour validation avant d'être visible.
               </p>
             </div>
             <div className="hidden lg:flex items-center gap-4 rounded-full bg-surface/80 px-5 py-3 shadow-soft backdrop-blur-xl">
@@ -150,7 +148,7 @@ const PublierAnnonce = () => {
             </div>
           </div>
 
-          <form className="grid grid-cols-1 gap-12 lg:grid-cols-12" onSubmit={(e) => { e.preventDefault(); submitListing(formData.status); }} aria-busy={loading}>
+          <form className="grid grid-cols-1 gap-12 lg:grid-cols-12" onSubmit={(e) => { e.preventDefault(); submitListing(); }} aria-busy={loading}>
             <div className="lg:col-span-8 space-y-10">
               <section className="rounded-[2rem] bg-surface p-6 shadow-[0_40px_40px_rgba(38,48,53,0.05)] transition-all hover:shadow-[0_40px_60px_rgba(38,48,53,0.08)] md:p-10">
                 <div className="mb-8 flex items-center gap-4">
@@ -217,17 +215,6 @@ const PublierAnnonce = () => {
                   <div className="space-y-2">
                     <label htmlFor="min_duration_months" className="ml-2 text-sm font-semibold text-ink">Durée minimale (mois)</label>
                     <input id="min_duration_months" type="number" name="min_duration_months" value={formData.min_duration_months} onChange={handleChange} className="w-full rounded-full border-none bg-surfaceContainer px-6 py-4 text-sm text-ink shadow-soft transition focus:ring-2 focus:ring-primaryContainer" min="1" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="status" className="ml-2 text-sm font-semibold text-ink">Statut</label>
-                    <div className="relative">
-                      <select id="status" name="status" value={formData.status} onChange={handleChange} className="w-full appearance-none rounded-full border-none bg-surfaceContainer px-6 py-4 pr-12 text-sm text-ink shadow-soft transition focus:ring-2 focus:ring-primaryContainer">
-                        <option value="DRAFT">Brouillon</option>
-                        <option value="PUBLISHED">Publiée</option>
-                      </select>
-                      <span className="material-symbols-outlined pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted">expand_more</span>
-                    </div>
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
@@ -411,11 +398,8 @@ const PublierAnnonce = () => {
               ) : null}
 
               <div className="flex flex-col gap-4 pt-2 md:flex-row">
-                <Button type="button" size="lg" variant="primary" disabled={loading} className="flex-1 py-5 text-lg font-bold" onClick={() => submitListing('PUBLISHED')}>
-                  {loading ? 'Publication en cours…' : "Publier l'annonce"}
-                </Button>
-                <Button type="button" size="lg" variant="ghost" disabled={loading} className="flex-1 py-5 text-lg font-bold" onClick={() => submitListing('DRAFT')}>
-                  Enregistrer en brouillon
+                <Button type="button" size="lg" variant="primary" disabled={loading} className="flex-1 py-5 text-lg font-bold" onClick={submitListing}>
+                  {loading ? 'Envoi en cours…' : 'Soumettre pour validation'}
                 </Button>
               </div>
             </div>

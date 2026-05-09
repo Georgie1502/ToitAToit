@@ -39,7 +39,7 @@ const OUVERTURE_OPTIONS = [
 
 const OnboardingSeeker = () => {
   const [formData, setFormData] = useState({
-    birth_date: '', gender: '', occupation_status: '', bio: '',
+    birth_date: '', gender: '', occupation_status: '', bio: '', phone: '',
     budget_min: '', budget_max: '', location: '',
     smoking: '', pets: '', noise_level: '', guests_policy: '',
     coloc_reason: '', coloc_type: '', wakeup: '', schedule_return: '',
@@ -71,6 +71,7 @@ const OnboardingSeeker = () => {
         gender: formData.gender || null,
         occupation_status: formData.occupation_status || null,
         bio: formData.bio || null,
+        phone: formData.phone || null,
       });
       await upsertMyPreferences({
         budget_min: formData.budget_min || null,
@@ -137,6 +138,10 @@ const OnboardingSeeker = () => {
                       <option value="PRO">En activité</option>
                       <option value="OTHER">Autre</option>
                     </select>
+                  </label>
+                  <label className="flex flex-col gap-2 font-body text-sm font-semibold text-ink">
+                    Téléphone
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className={field} placeholder="06 00 00 00 00" />
                   </label>
                   <label className="flex flex-col gap-2 font-body text-sm font-semibold text-ink sm:col-span-2">
                     Bio

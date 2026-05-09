@@ -53,6 +53,7 @@ CREATE TABLE profiles (
   occupation_status TEXT NULL CHECK (occupation_status IN ('STUDENT','PRO','OTHER')),
   role              TEXT NULL CHECK (role IN ('OWNER','SEEKER','ASSOCIATION')),
   bio               TEXT NULL,
+  phone             TEXT NULL,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );

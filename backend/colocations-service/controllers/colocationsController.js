@@ -212,8 +212,6 @@ exports.createListing = async (req, res) => {
     const availableTo = parseDateOrNull(req.body.available_to);
     const minDurationMonths = parseIntOrNull(req.body.min_duration_months);
 
-    const status = (req.body.status || "DRAFT").toUpperCase();
-
     const city = (req.body.location?.city || req.body.city || "").trim();
     const postalCode = (req.body.location?.postal_code || req.body.postal_code || "").trim();
     const address = (req.body.location?.address || req.body.address || null) ?? null;
@@ -232,10 +230,8 @@ exports.createListing = async (req, res) => {
     if (!ALLOWED_HOUSING_TYPES.has(housingType)) {
       return res.status(400).json({ message: "housing_type invalide" });
     }
-    if (!ALLOWED_STATUSES.has(status)) {
-      return res.status(400).json({ message: "status invalide" });
-    }
 
+    const status = "DRAFT";
     const locationId = randomUUID();
     const listingId = randomUUID();
 
@@ -331,6 +327,9 @@ exports.updateListing = async (req, res) => {
       }
       if (key === "status" && value && !ALLOWED_STATUSES.has(value)) {
         return res.status(400).json({ message: "status invalide" });
+      }
+      if (key === "status" && value === "PUBLISHED") {
+        return res.status(403).json({ message: "Seule l'association peut publier une annonce" });
       }
       if (key === "rent_amount" && value === null) {
         return res.status(400).json({ message: "rent_amount invalide" });
@@ -444,6 +443,34 @@ exports.listPendingListings = async (req, res) => {
     );
 
     return res.json({ listings: result.rows, limit, offset });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+exports.listPublishedListingsWithApplications = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+        l.id,
+        l.title,
+        l.rent_amount,
+        l.housing_type,
+        l.created_at,
+        loc.city,
+        loc.postal_code,
+        COUNT(a.id) FILTER (WHERE a.status = 'SENT') AS pending_count,
+        COUNT(a.id) AS total_count
+       FROM listings l
+       JOIN locations loc ON loc.id = l.location_id
+       LEFT JOIN applications a ON a.listing_id = l.id
+       WHERE l.status = 'PUBLISHED'
+       GROUP BY l.id, loc.city, loc.postal_code
+       HAVING COUNT(a.id) FILTER (WHERE a.status = 'SENT') > 0
+       ORDER BY l.created_at DESC`,
+    );
+    return res.json({ listings: result.rows });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur" });
