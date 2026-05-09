@@ -6,6 +6,9 @@ import { listPendingListings, updateListingStatus } from '../services/admin';
 
 const housingLabels = { ROOM: 'Chambre', STUDIO: 'Studio', FLAT: 'Appartement', HOUSE: 'Maison', OTHER: 'Autre' };
 
+const formatDate = (value) =>
+  new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
 const AdminDashboard = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +35,7 @@ const AdminDashboard = () => {
 
   const handleStatus = async (listingId, status) => {
     setUpdating(listingId);
+    setError('');
     try {
       await updateListingStatus(listingId, status);
       setListings((prev) => prev.filter((l) => l.id !== listingId));
@@ -68,55 +72,53 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <ul className="space-y-4">
-            {listings.map((listing) => (
-              <li key={listing.id} className="rounded-3xl bg-surface p-6 shadow-soft">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <h3 className="font-display text-lg text-ink">{listing.title}</h3>
-                    <p className="font-body text-sm text-muted">
-                      {listing.city}{listing.postal_code ? ` (${listing.postal_code})` : ''}
-                      {' — '}
-                      {housingLabels[listing.housing_type] || listing.housing_type}
-                      {listing.rent_amount ? ` — ${listing.rent_amount} €/mois` : ''}
-                    </p>
-                    <p className="font-body text-xs text-muted">
-                      Soumise le {new Date(listing.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      {' · '}
-                      {listing.application_count} candidature{listing.application_count !== '1' ? 's' : ''}
-                    </p>
-                  </div>
+            {listings.map((listing) => {
+              const count = Number(listing.application_count);
+              return (
+                <li key={listing.id} className="rounded-3xl bg-surface p-6 shadow-soft">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="space-y-1">
+                      <h3 className="font-display text-lg text-ink">{listing.title}</h3>
+                      <p className="font-body text-sm text-muted">
+                        {listing.city}{listing.postal_code ? ` (${listing.postal_code})` : ''}
+                        {' — '}
+                        {housingLabels[listing.housing_type] || listing.housing_type}
+                        {listing.rent_amount ? ` — ${listing.rent_amount} €/mois` : ''}
+                      </p>
+                      <p className="font-body text-xs text-muted">
+                        Soumise le {formatDate(listing.created_at)}
+                        {' · '}
+                        {count} candidature{count !== 1 ? 's' : ''}
+                      </p>
+                    </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                      as={Link}
-                      to={`/admin/annonces/${listing.id}/candidatures`}
-                      size="sm"
-                      variant="ghost"
-                    >
-                      Candidatures
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleStatus(listing.id, 'CLOSED')}
-                      disabled={updating === listing.id}
-                    >
-                      Rejeter
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="primary"
-                      onClick={() => handleStatus(listing.id, 'PUBLISHED')}
-                      disabled={updating === listing.id}
-                    >
-                      {updating === listing.id ? '...' : 'Valider'}
-                    </Button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button as={Link} to={`/admin/annonces/${listing.id}/candidatures`} size="sm" variant="ghost">
+                        Candidatures
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleStatus(listing.id, 'CLOSED')}
+                        disabled={updating === listing.id}
+                      >
+                        Rejeter
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="primary"
+                        onClick={() => handleStatus(listing.id, 'PUBLISHED')}
+                        disabled={updating === listing.id}
+                      >
+                        {updating === listing.id ? '...' : 'Valider'}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

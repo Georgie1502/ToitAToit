@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
-import { listApplicationsForListing, rejectApplication, selectCandidate } from '../services/admin';
+import { rejectApplication, selectCandidate } from '../services/admin';
+import { listApplicationsForListing } from '../services/applications';
 
 const statusConfig = {
   SENT: { label: 'En attente', className: 'bg-secondaryContainer/50 text-ink' },
@@ -10,6 +11,9 @@ const statusConfig = {
   REJECTED: { label: 'Refusé', className: 'bg-danger/10 text-danger' },
   WITHDRAWN: { label: 'Retiré', className: 'bg-surfaceContainer text-muted' },
 };
+
+const formatDate = (value) =>
+  new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
 const AdminCandidatures = () => {
   const { id } = useParams();
@@ -36,12 +40,11 @@ const AdminCandidatures = () => {
     return () => { isMounted = false; };
   }, [id]);
 
-  const handleAction = async (applicationId, action) => {
+  const handleAction = async (applicationId, apiFn) => {
     setUpdating(applicationId);
+    setError('');
     try {
-      const updated = action === 'select'
-        ? await selectCandidate(applicationId)
-        : await rejectApplication(applicationId);
+      const updated = await apiFn(applicationId);
       setApplications((prev) =>
         prev.map((a) => (a.id === applicationId ? { ...a, status: updated.status } : a)),
       );
@@ -55,6 +58,9 @@ const AdminCandidatures = () => {
   const pending = applications.filter((a) => a.status === 'SENT');
   const processed = applications.filter((a) => a.status !== 'SENT');
 
+  const count = applications.length;
+  const countLabel = loading ? null : `${count} candidature${count !== 1 ? 's' : ''} reçue${count !== 1 ? 's' : ''}.`;
+
   return (
     <PageShell>
       <div className="mx-auto max-w-4xl space-y-8">
@@ -62,9 +68,7 @@ const AdminCandidatures = () => {
           <div className="space-y-2">
             <p className="font-body text-xs font-semibold uppercase tracking-widest text-primary">Administration</p>
             <h2 className="font-display text-4xl text-ink">Candidatures.</h2>
-            <p className="font-body text-base text-muted">
-              {applications.length} candidature{applications.length !== 1 ? 's' : ''} reçue{applications.length !== 1 ? 's' : ''}.
-            </p>
+            {countLabel ? <p className="font-body text-base text-muted">{countLabel}</p> : null}
           </div>
           <Button as={Link} to="/admin" size="sm" variant="ghost">
             Retour
@@ -99,7 +103,7 @@ const AdminCandidatures = () => {
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div className="space-y-2">
                           <p className="font-body text-xs text-muted">
-                            Candidature reçue le {new Date(app.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            Reçue le {formatDate(app.created_at)}
                           </p>
                           {app.message ? (
                             <p className="font-serif text-sm italic text-ink">"{app.message}"</p>
@@ -112,7 +116,7 @@ const AdminCandidatures = () => {
                             type="button"
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleAction(app.id, 'reject')}
+                            onClick={() => handleAction(app.id, rejectApplication)}
                             disabled={updating === app.id}
                           >
                             Refuser
@@ -121,7 +125,7 @@ const AdminCandidatures = () => {
                             type="button"
                             size="sm"
                             variant="primary"
-                            onClick={() => handleAction(app.id, 'select')}
+                            onClick={() => handleAction(app.id, selectCandidate)}
                             disabled={updating === app.id}
                           >
                             {updating === app.id ? '...' : 'Sélectionner'}
@@ -145,7 +149,7 @@ const AdminCandidatures = () => {
                     return (
                       <li key={app.id} className="flex items-center justify-between rounded-3xl bg-surface px-6 py-4 shadow-soft">
                         <p className="font-body text-sm text-muted">
-                          {new Date(app.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          {formatDate(app.created_at)}
                           {app.message ? ` — "${app.message.slice(0, 60)}${app.message.length > 60 ? '…' : ''}"` : ''}
                         </p>
                         <span className={`rounded-full px-3 py-0.5 font-body text-xs font-semibold ${status.className}`}>
