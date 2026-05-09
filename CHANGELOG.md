@@ -18,8 +18,8 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 ### Corrigé
 - corriger le filtrage des tags pour la version sémantique dans le workflow CHANGELOG
 - mettre à jour les métriques et rapports de couverture de code
-- : mettre à jour la navigation et améliorer la gestion des candidatures dans l'administration
-- Refornt de la page d'accueil
+- Mettre à jour la navigation et améliorer la gestion des candidatures dans l'administration
+- Refonte de la page d'accueil
 
 
 ## [0.1.0] - 2026-05-09
