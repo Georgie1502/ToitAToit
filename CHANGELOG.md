@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.2.1] - 2026-05-09
+
+### Documentation
+- Corriger les entrées malformées dans le CHANGELOG v0.2.0
+
+
 ## [0.2.0] - 2026-05-09
 
 ### Ajouté
