@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88% </span>
+                <span class="strong">88.46% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>44/50</span>
+                <span class='fraction'>46/52</span>
             </div>
         
             
@@ -259,10 +259,7 @@
 <a name='L194'></a><a href='#L194'>194</a>
 <a name='L195'></a><a href='#L195'>195</a>
 <a name='L196'></a><a href='#L196'>196</a>
-<a name='L197'></a><a href='#L197'>197</a>
-<a name='L198'></a><a href='#L198'>198</a>
-<a name='L199'></a><a href='#L199'>199</a>
-<a name='L200'></a><a href='#L200'>200</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L197'></a><a href='#L197'>197</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -316,6 +313,9 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -347,6 +347,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -407,15 +410,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -515,7 +509,10 @@ exports.listApplicationsForListing = async (req, res) =&gt; {
     if (listing.rows.length === 0) {
       return res.status(404).json({ message: "Annonce introuvable" });
     }
-    if (listing.rows[0].owner_user_id !== userId) {
+&nbsp;
+    const isOwner = listing.rows[0].owner_user_id === userId;
+    const isAssociation = req.userRole === "ASSOCIATION";
+    if (!isOwner &amp;&amp; !isAssociation) {
       return res.status(403).json({ message: "Interdit" });
     }
 &nbsp;
@@ -546,6 +543,9 @@ exports.applyToListing = async (req, res) =&gt; {
     );
     if (listing.rows.length === 0) {
       return res.status(404).json({ message: "Annonce introuvable" });
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (listing.rows[0].status !== "PUBLISHED") {
+<span class="cstat-no" title="statement not covered" >      return res.status(400).json({ message: "Cette annonce n'est pas disponible" });</span>
     }
     if (listing.rows[0].owner_user_id === userId) {
       return res.status(400).json({ message: "Tu ne peux pas candidater a ta propre annonce" });
@@ -609,24 +609,15 @@ exports.updateApplicationStatus = async (req, res) =&gt; {
     }
     const application = appResult.rows[0];
 &nbsp;
-    const listing = await pool.query(
-      "SELECT owner_user_id FROM listings WHERE id = $1",
-      [application.listing_id],
-    );
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (listing.rows.length === 0) {
-<span class="cstat-no" title="statement not covered" >      return res.status(404).json({ message: "Annonce introuvable" });</span>
-    }
-    const ownerUserId = listing.rows[0].owner_user_id;
-&nbsp;
     const isApplicant = userId === application.applicant_user_id;
-    const isOwner = userId === ownerUserId;
+    const isAssociation = req.userRole === "ASSOCIATION";
 &nbsp;
-    if (!isApplicant &amp;&amp; !isOwner) {
+    if (!isApplicant &amp;&amp; !isAssociation) {
       return res.status(403).json({ message: "Interdit" });
     }
 &nbsp;
-    // Applicant can only withdraw (and only from SENT).
-    if (isApplicant) {
+    // Applicant can only withdraw their own application (only from SENT).
+    if (isApplicant &amp;&amp; !isAssociation) {
       if (newStatus !== "WITHDRAWN") {
         return res.status(403).json({ message: "Interdit" });
       }
@@ -635,8 +626,8 @@ exports.updateApplicationStatus = async (req, res) =&gt; {
       }
     }
 &nbsp;
-    // Owner can accept/reject (only from SENT).
-    if (isOwner &amp;&amp; !isApplicant) {
+    // Association selects or rejects (only from SENT).
+    if (isAssociation) {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (newStatus !== "ACCEPTED" &amp;&amp; newStatus !== "REJECTED") {
 <span class="cstat-no" title="statement not covered" >        return res.status(403).json({ message: "Interdit" });</span>
       }
@@ -667,7 +658,7 @@ exports.updateApplicationStatus = async (req, res) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-10T07:21:33.801Z
+                at 2026-05-09T14:38:18.065Z
             </div>
         <script src="prettify.js"></script>
         <script>
