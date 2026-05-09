@@ -67,7 +67,10 @@ exports.login = async (req, res) => {
     }
 
     const result = await pool.query(
-      "SELECT id, username, email, password_hash, status FROM users WHERE email = $1",
+      `SELECT u.id, u.username, u.email, u.password_hash, u.status, p.role
+       FROM users u
+       LEFT JOIN profiles p ON p.user_id = u.id
+       WHERE u.email = $1`,
       [email],
     );
 
@@ -85,7 +88,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Identifiants invalides" });
     }
 
-    const token = generateToken(user.id);
+    const role = user.role || null;
+    const token = generateToken(user.id, role);
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -95,7 +99,7 @@ exports.login = async (req, res) => {
 
     return res.json({
       message: "Connexion reussie",
-      user: { id: user.id, username: user.username, email: user.email },
+      user: { id: user.id, username: user.username, email: user.email, role },
       token,
     });
   } catch (err) {

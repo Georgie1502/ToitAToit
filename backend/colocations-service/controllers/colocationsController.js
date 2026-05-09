@@ -416,3 +416,66 @@ exports.searchByLocation = async (req, res) => {
   return exports.listListings(req, res);
 };
 
+exports.listPendingListings = async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit || "50", 10), 200);
+    const offset = Math.max(parseInt(req.query.offset || "0", 10), 0);
+
+    const result = await pool.query(
+      `SELECT
+        l.id,
+        l.owner_user_id,
+        l.title,
+        l.status,
+        l.rent_amount,
+        l.housing_type,
+        l.created_at,
+        loc.city,
+        loc.postal_code,
+        COUNT(a.id) FILTER (WHERE a.status = 'SENT') AS application_count
+       FROM listings l
+       JOIN locations loc ON loc.id = l.location_id
+       LEFT JOIN applications a ON a.listing_id = l.id
+       WHERE l.status = 'DRAFT'
+       GROUP BY l.id, loc.city, loc.postal_code
+       ORDER BY l.created_at DESC
+       LIMIT $1 OFFSET $2`,
+      [limit, offset],
+    );
+
+    return res.json({ listings: result.rows, limit, offset });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+exports.updateListingStatus = async (req, res) => {
+  try {
+    const listingId = req.params.id;
+    const newStatus = (req.body.status || "").toUpperCase();
+
+    if (!ALLOWED_STATUSES.has(newStatus)) {
+      return res.status(400).json({ message: "status invalide" });
+    }
+
+    const existing = await pool.query(
+      "SELECT id FROM listings WHERE id = $1",
+      [listingId],
+    );
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ message: "Annonce introuvable" });
+    }
+
+    const result = await pool.query(
+      "UPDATE listings SET status = $1 WHERE id = $2 RETURNING *",
+      [newStatus, listingId],
+    );
+
+    return res.json({ listing: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+

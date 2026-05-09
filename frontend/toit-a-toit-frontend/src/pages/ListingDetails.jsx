@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '../components/atoms';
+import { CandidatureModal } from '../components/molecules';
 import {
   ListingDetailsGallery,
   ListingDetailsMainSections,
@@ -8,8 +9,8 @@ import {
   ListingDetailsStickyCard,
 } from '../components/organisms';
 import { PageShell } from '../components/templates';
+import { listMyApplications } from '../services/applications';
 import { getListingById } from '../services/colocations';
-import { applyToListing } from '../services/applications';
 
 const housingLabels = { ROOM: 'Chambre', STUDIO: 'Studio', FLAT: 'Appartement', HOUSE: 'Maison', OTHER: 'Autre' };
 const statusLabels = { DRAFT: 'Brouillon', PUBLISHED: 'Publié', PAUSED: 'En pause', CLOSED: 'Fermé' };
@@ -38,7 +39,8 @@ const ListingDetails = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -66,6 +68,22 @@ const ListingDetails = () => {
     return () => {
       isMounted = false;
     };
+  }, [id]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkExistingApplication = async () => {
+      try {
+        const apps = await listMyApplications();
+        if (!isMounted) return;
+        const existing = apps.find((a) => a.listing_id === id && a.status !== 'WITHDRAWN');
+        if (existing) setHasApplied(true);
+      } catch {
+        // Non-blocking — silently ignore
+      }
+    };
+    checkExistingApplication();
+    return () => { isMounted = false; };
   }, [id]);
 
   const photoUrls = useMemo(() => {
@@ -118,25 +136,9 @@ const ListingDetails = () => {
     setFeedback(isFavorite ? 'Retirée des favoris.' : 'Ajoutée aux favoris.');
   };
 
-  const handleContact = async () => {
-    if (!listing) return;
-
-    const message = window.prompt('Écrivez un court message pour le propriétaire avant d’envoyer votre demande :', 'Bonjour, cette annonce m’intéresse.');
-    if (message === null) return;
-
-    setIsSubmitting(true);
-    setError('');
-    setFeedback('');
-
-    try {
-      await applyToListing(id, message.trim());
-      setFeedback('Votre demande a bien été envoyée.');
-    } catch (requestError) {
-      setError(requestError?.response?.data?.message || 'Impossible d’envoyer votre demande pour le moment.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const handleOpenModal = useCallback(() => setShowModal(true), []);
+  const handleModalSuccess = useCallback(() => setHasApplied(true), []);
+  const handleCloseModal = useCallback(() => setShowModal(false), []);
 
   useEffect(() => {
     if (!hasPhotos || !isAutoPlay || isHovered) return undefined;
@@ -288,15 +290,24 @@ const ListingDetails = () => {
               <ListingDetailsStickyCard
                 rentLabel={rentLabel}
                 chargesIncluded={listing?.charges_included}
-                isSubmitting={isSubmitting}
+                hasApplied={hasApplied}
                 isFavorite={isFavorite}
                 detailRows={detailRows}
-                onContact={handleContact}
+                onContact={handleOpenModal}
                 onToggleFavorite={handleFavorite}
               />
             </div>
           ) : null}
         </section>
+
+        {showModal ? (
+          <CandidatureModal
+            listingTitle={listing?.title}
+            listingId={id}
+            onClose={handleCloseModal}
+            onSuccess={handleModalSuccess}
+          />
+        ) : null}
 
         {isLightboxOpen && hasPhotos ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 px-4 py-8 backdrop-blur-sm">

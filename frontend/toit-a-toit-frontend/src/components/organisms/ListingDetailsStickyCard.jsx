@@ -3,7 +3,7 @@ import { Button } from '../atoms';
 const ListingDetailsStickyCard = ({
   rentLabel,
   chargesIncluded,
-  isSubmitting,
+  hasApplied,
   isFavorite,
   detailRows,
   onContact,
@@ -21,15 +21,24 @@ const ListingDetailsStickyCard = ({
         </div>
 
         <div className="space-y-4">
-          <Button type="button" variant="primary" size="lg" className="w-full" onClick={onContact} disabled={isSubmitting}>
-            <span className="material-symbols-outlined text-[18px]">mail</span>
-            {isSubmitting ? 'Envoi en cours...' : 'Contacter l’hôte'}
+          <Button
+            type="button"
+            variant={hasApplied ? 'ghost' : 'primary'}
+            size="lg"
+            className="w-full"
+            onClick={onContact}
+            disabled={hasApplied}
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              {hasApplied ? 'check_circle' : 'send'}
+            </span>
+            {hasApplied ? 'Candidature envoyée' : 'Candidater'}
           </Button>
           <Button
             type="button"
             variant={isFavorite ? 'secondary' : 'ghost'}
             size="lg"
-            className={`w-full ${isFavorite ? 'border-primary/25 bg-primaryContainer/20 text-primary' : 'border-2 border-primary/20'}`}
+            className={`w-full${isFavorite ? ' border-primary/25 bg-primaryContainer/20 text-primary' : ' border-2 border-primary/20'}`}
             onClick={onToggleFavorite}
           >
             <span className="material-symbols-outlined text-[18px]">favorite</span>
