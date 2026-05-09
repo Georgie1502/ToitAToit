@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.2.3] - 2026-05-09
+
+### Documentation
+- Mettre à jour CONTRIBUTING avec la nouvelle convention de commits
+
+
 ## [0.2.2] - 2026-05-09
 
 ### Refactorisé
