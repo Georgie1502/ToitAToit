@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1778337498091" clover="3.2.0">
-  <project timestamp="1778337498091" name="All files">
+<coverage generated="1778340353694" clover="3.2.0">
+  <project timestamp="1778340353694" name="All files">
     <metrics statements="82" coveredstatements="71" conditionals="52" coveredconditionals="46" methods="4" coveredmethods="4" elements="138" coveredelements="121" complexity="0" loc="82" ncloc="82" packages="1" files="1" classes="1"/>
     <file name="applicationsController.js" path="C:\Users\jor_t\Desktop\ToitAtoit\backend\colocations-service\controllers\applicationsController.js">
       <metrics statements="82" coveredstatements="71" conditionals="52" coveredconditionals="46" methods="4" coveredmethods="4"/>
