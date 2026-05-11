@@ -12,18 +12,30 @@ Merci de contribuer à la plateforme de colocation Toit à Toit ! Bug, idée ou 
 
 ## Branches
 
-1. Créer une issue (Kanban) décrivant le besoin.
-2. Créer une branche depuis `main` : `feature/<id>-<sujet-court>` ou `fix/<id>-<sujet-court>` (ex. `feature/123-auth-jwt`).
-3. Un seul sujet par branche.
+### Création automatique
 
-Types de branches fréquents :
+À chaque ouverture d'issue sur GitHub, une branche est **créée automatiquement** par GitHub Actions si le titre de l'issue commence par un identifiant au format `TOIT-XXXX`.
 
-| Type | Usage |
-|---|---|
-| `feature` | Nouvelle fonctionnalité |
-| `fix` | Correctif de bug |
-| `refactor` | Amélioration sans changement fonctionnel |
-| `docs` | Documentation |
+```
+Titre de l'issue : TOIT-1105 Ajout de la page recherche
+→ Branche créée  : feat/TOIT-1105
+```
+
+Le workflow commente directement sur l'issue avec le nom de la branche créée.
+
+### Format des branches
+
+| Format | Exemple | Usage |
+|---|---|---|
+| `feat/TOIT-XXXX` | `feat/TOIT-1105` | Créée automatiquement depuis une issue |
+| `fix/TOIT-XXXX` | `fix/TOIT-2001` | Correctif urgent créé manuellement |
+| `docs/TOIT-XXXX` | `docs/TOIT-7001` | Documentation créée manuellement |
+
+### Règles
+
+1. Le titre de l'issue **doit** commencer par `TOIT-XXXX` pour déclencher la création automatique.
+2. Un seul sujet par branche.
+3. Toujours partir de `main` comme base.
 
 ## Développement
 
