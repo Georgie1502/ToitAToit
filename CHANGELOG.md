@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.2.4] - 2026-05-11
+
+### Documentation
+- Corriger la stratégie de branches pour qu'elle soit cohérente avec le workflow automatique
+
+
 ## [0.2.3] - 2026-05-09
 
 ### Documentation
