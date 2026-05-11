@@ -131,9 +131,10 @@ Utiliser un tableau Kanban (GitHub Projects ou autre) pour suivre les taches. No
 
 ### Strategie de branches
 
-- `main` : code stable.
-- Branches de version (ex. `1.0.0`) pour les releases ou hotfix.
-- `feature/<id>-<sujet>` ou `fix/<id>-<sujet>` derives de l'issue/kanban.
+- `main` : code stable, protégé — aucun push direct.
+- Les branches de travail sont créées **automatiquement** à l'ouverture d'une issue dont le titre commence par `TOIT-XXXX`.
+- Format : `feat/TOIT-XXXX` (automatique) ou `fix/TOIT-XXXX` / `docs/TOIT-XXXX` (manuel).
+- Exemples réels : `feat/TOIT-1105`, `feat/TOIT-2001`, `docs/TOIT-7001`.
 
 ### Conventions de commits
 
