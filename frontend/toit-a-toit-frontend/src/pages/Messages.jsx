@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
 import { getCurrentUser } from '../services/auth';
 import { listConversations } from '../services/messages';

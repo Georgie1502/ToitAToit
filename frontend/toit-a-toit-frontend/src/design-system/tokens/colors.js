@@ -15,7 +15,7 @@ export const light = {
   danger: '#FF586A',
 };
 
-export const dark = light; // dark mode not defined yet, mirror light to avoid undefined access
+export const dark = light;
 
 export const status = {
   success: '#16A34A',
@@ -23,4 +23,5 @@ export const status = {
   danger: '#FF586A',
 };
 
-export default { light, dark, status };
+const colors = { light, dark, status };
+export default colors;
