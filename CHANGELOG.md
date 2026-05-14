@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.4.3] - 2026-05-14
+
+### Corrigé
+- Corriger l'affichage du message de succès CI et ajuster la commande de lint
+
+
 ## [0.4.2] - 2026-05-14
 
 ### Corrigé
