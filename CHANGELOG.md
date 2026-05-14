@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.4.2] - 2026-05-14
+
+### Corrigé
+- Réorganiser les exportations de couleurs et supprimer l'importation inutile du bouton dans Messages.jsx
+
+
 ## [0.4.1] - 2026-05-14
 
 ### Corrigé
