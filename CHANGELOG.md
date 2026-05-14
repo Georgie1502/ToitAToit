@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.4.4] - 2026-05-14
+
+### Corrigé
+- Mettre à jour la commande de lint pour ne pas autoriser d'avertissements
+
+
 ## [0.4.3] - 2026-05-14
 
 ### Corrigé
