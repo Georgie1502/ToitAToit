@@ -20,11 +20,11 @@ const createServiceProxy = (serviceKey, pathRewrite = {}) => {
     timeout: service.timeout,
     
     // Logs pour le debugging
-    onProxyReq: (proxyReq, req, res) => {
+    onProxyReq: (proxyReq, req, _res) => {
       console.log(`→ Proxy vers ${service.name}: ${req.method} ${req.path}`);
     },
     
-    onProxyRes: (proxyRes, req, res) => {
+    onProxyRes: (proxyRes, _req, _res) => {
       console.log(`← Réponse de ${service.name}: ${proxyRes.statusCode}`);
     },
     

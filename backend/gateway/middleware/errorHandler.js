@@ -1,7 +1,7 @@
 /**
  * Middleware de gestion centralisée des erreurs
  */
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, _next) => {
   console.error('❌ Erreur Gateway:', {
     message: err.message,
     stack: err.stack,
