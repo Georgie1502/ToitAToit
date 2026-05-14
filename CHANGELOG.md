@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.4.0] - 2026-05-14
+
+### Ajouté
+- Ajouter le déploiement du gateway sur Render et ajuster les tests de santé
+
+
 ## [0.3.0] - 2026-05-13
 
 ### Ajouté
