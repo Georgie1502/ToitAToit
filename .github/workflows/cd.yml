@@ -75,7 +75,7 @@ jobs:
       - name: Déclencher le déploiement Render
         run: |
           curl --fail -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-          echo "✅ Déploiement déclenché"
+          echo "Déploiement déclenché"
 
   # ── Tag git de version ───────────────────────────────────────────────────────
   tag-release:
@@ -122,9 +122,9 @@ jobs:
             --retry-connrefused \
             --max-time 60 \
             --connect-timeout 10 \
-            "${{ secrets.RENDER_DEPLOY_URL }}/api/health" \
+            "${{ secrets.RENDER_DEPLOY_URL }}/health" \
             -H "Accept: application/json"
-          echo "✅ Gateway opérationnel"
+          echo "Gateway opérationnel"
 
   # ── Résumé CD ────────────────────────────────────────────────────────────────
   cd-success:
@@ -134,4 +134,4 @@ jobs:
 
     steps:
       - name: Déploiement terminé
-        run: echo "🚀 CD réussi — gateway déployé sur Render"
+        run: echo "CD réussi — gateway déployé sur Render"
