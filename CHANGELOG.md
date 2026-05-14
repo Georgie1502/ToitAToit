@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.4.1] - 2026-05-14
+
+### Corrigé
+- Corriger les messages et commentaires dans le code pour une meilleure lisibilité
+
+
 ## [0.4.0] - 2026-05-14
 
 ### Ajouté
