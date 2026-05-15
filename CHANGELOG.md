@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.4.5] - 2026-05-15
+
+### Corrigé
+- Mettre à jour les fichiers .env.example avec des valeurs par défaut génériques
+
+
 ## [0.4.4] - 2026-05-14
 
 ### Corrigé
