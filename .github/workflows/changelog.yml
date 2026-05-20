@@ -142,7 +142,7 @@ jobs:
           git checkout -b "$BRANCH"
           git add CHANGELOG.md
           git commit -m "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}"
-          git push origin "$BRANCH"
+          git push --force origin "$BRANCH"
           gh pr create \
             --title "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}" \
             --body "Mise à jour automatique du CHANGELOG — aucune modification de code." \
