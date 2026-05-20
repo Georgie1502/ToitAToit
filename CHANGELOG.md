@@ -9,6 +9,19 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.5.0] - 2026-05-20
+
+### Ajouté
+- Ajout de tests pour les contrôleurs de colocations, favoris et matchs
+
+### Corrigé
+- Utilisation de l'option --force lors du push de la branche pour le CHANGELOG
+- Mise à jour du workflow de génération du CHANGELOG pour créer une branche et une PR automatiquement
+
+### Documentation
+- Mise à jour du guide de contribution pour clarifier le format des titres d'issues et les types d'issues
+
+
 ## [0.4.5] - 2026-05-15
 
 ### Corrigé
