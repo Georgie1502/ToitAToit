@@ -2,40 +2,62 @@
 
 Merci de contribuer à la plateforme de colocation Toit à Toit ! Bug, idée ou feature : toute aide est la bienvenue. Ce guide explique comment signaler un problème, ouvrir une branche et soumettre une pull request.
 
-## Signalement d'anomalies
+## Création d'une issue
 
-- Décrire le problème clairement et concisément.
-- Fournir les étapes de reproduction.
-- Indiquer le comportement attendu et le comportement observé.
+### Format du titre
+
+Le titre de l'issue **doit** commencer par un identifiant au format `TOIT-XXXX` suivi d'une description courte :
+
+```
+TOIT-XXXX Description courte et claire
+```
+
+Exemples :
+
+```
+TOIT-1105 Ajout de la page recherche
+TOIT-2001 Correction du bug de déconnexion
+TOIT-7001 Mise à jour du README gateway
+```
+
+> ⚠️ Si le titre ne respecte pas ce format, la création automatique de branche échouera. Le workflow commentera l'issue pour vous en informer. Il faudra alors créer la branche manuellement (voir ci-dessous).
+
+### Types d'issues
+
+| Type | Quand l'utiliser |
+|---|---|
+| ADD| Nouvelle fonctionnalité ou amélioration |
+| FIX | Comportement inattendu ou erreur |
+| DOCS | Documentation manquante ou incorrecte |
+
+### Contenu
+
+- Décrire le problème ou la fonctionnalité clairement et concisément.
+- Pour un bug : fournir les étapes de reproduction, le comportement attendu et le comportement observé.
 - Ajouter des captures d'écran si utile.
-- Préciser le contexte (version, horodatage, navigateur/OS ou environnement).
+- Préciser le contexte (version, navigateur/OS ou environnement).
 
 ## Branches
 
-### Création automatique
-
-À chaque ouverture d'issue sur GitHub, une branche est **créée automatiquement** par GitHub Actions si le titre de l'issue commence par un identifiant au format `TOIT-XXXX`.
+À chaque ouverture d'issue avec un titre au bon format, GitHub Actions crée automatiquement une branche et commente sur l'issue :
 
 ```
 Titre de l'issue : TOIT-1105 Ajout de la page recherche
 → Branche créée  : feat/TOIT-1105
 ```
 
-Le workflow commente directement sur l'issue avec le nom de la branche créée.
-
-### Format des branches
+### Format
 
 | Format | Exemple | Usage |
 |---|---|---|
 | `feat/TOIT-XXXX` | `feat/TOIT-1105` | Créée automatiquement depuis une issue |
-| `fix/TOIT-XXXX` | `fix/TOIT-2001` | Correctif urgent créé manuellement |
-| `docs/TOIT-XXXX` | `docs/TOIT-7001` | Documentation créée manuellement |
+| `fix/TOIT-XXXX` | `fix/TOIT-2001` | Correctif urgent, créée manuellement |
+| `docs/TOIT-XXXX` | `docs/TOIT-7001` | Documentation, créée manuellement |
 
 ### Règles
 
-1. Le titre de l'issue **doit** commencer par `TOIT-XXXX` pour déclencher la création automatique.
-2. Un seul sujet par branche.
-3. Toujours partir de `main` comme base.
+- Un seul sujet par branche.
+- Toujours partir de `main` comme base.
 
 ## Développement
 

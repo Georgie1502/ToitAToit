@@ -6,12 +6,15 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   update-changelog:
     name: Mise à jour du CHANGELOG et versionnage
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
+    if: >
+      github.actor != 'github-actions[bot]' &&
+      !startsWith(github.event.head_commit.message, '[DOCS] CHANGELOG')
 
     steps:
       - uses: actions/checkout@v4
@@ -128,15 +131,24 @@ jobs:
               f.write('skip=false\n')
           EOF
 
-      - name: Committer le CHANGELOG mis à jour
+      - name: Créer une branche et une PR pour le CHANGELOG
         if: steps.generate.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH="docs/changelog-v${{ steps.generate.outputs.new_version }}"
+          git checkout -b "$BRANCH"
           git add CHANGELOG.md
-          git diff --staged --quiet && echo "Rien à committer" || \
-            git commit -m "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}"
-          git push
+          git commit -m "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}" \
+            --body "Mise à jour automatique du CHANGELOG — aucune modification de code." \
+            --base main \
+            --head "$BRANCH"
+          gh pr merge --auto --squash "$BRANCH" || true
 
       - name: Créer le tag sémantique
         if: steps.generate.outputs.skip != 'true'
