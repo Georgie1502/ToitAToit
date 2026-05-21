@@ -20,6 +20,14 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 ### Documentation
 - Mise à jour du guide de contribution pour clarifier le format des titres d'issues et les types d'issues
+## [0.6.0] - 2026-05-21
+
+### Ajouté
+- Menu de navigation mobile dans le composant NavBar
+- Ajout d'un audit des dépendances
+
+### Corrigé
+- Correction vulnérabilités path-to-regexp/qs et ajustement seuil audit frontend CRA
 
 
 ## [0.4.5] - 2026-05-15
