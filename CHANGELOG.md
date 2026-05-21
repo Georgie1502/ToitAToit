@@ -9,6 +9,16 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.6.0] - 2026-05-21
+
+### Ajouté
+- Menu de navigation mobile dans le composant NavBar
+- Ajout d'un audit des dépendances
+
+### Corrigé
+- Correction vulnérabilités path-to-regexp/qs et ajustement seuil audit frontend CRA
+
+
 ## [0.4.5] - 2026-05-15
 
 ### Corrigé
