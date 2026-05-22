@@ -21,6 +21,7 @@ jobs:
         run: |
           set -euo pipefail
           ISSUE_TITLE="${{ github.event.issue.title }}"
+          LABELS='${{ toJson(github.event.issue.labels) }}'
 
           echo "Titre de l'issue : $ISSUE_TITLE"
 
@@ -34,7 +35,19 @@ jobs:
             exit 0
           fi
 
-          BRANCH_NAME="feat/${ISSUE_ID}"
+          # Déterminer le préfixe depuis le label de l'issue
+          PREFIX="feat"
+          if echo "$LABELS" | jq -e '.[] | select(.name == "bug")' > /dev/null 2>&1; then
+            PREFIX="fix"
+          elif echo "$LABELS" | jq -e '.[] | select(.name == "documentation")' > /dev/null 2>&1; then
+            PREFIX="docs"
+          elif echo "$LABELS" | jq -e '.[] | select(.name == "refactor")' > /dev/null 2>&1; then
+            PREFIX="refactor"
+          elif echo "$LABELS" | jq -e '.[] | select(.name == "tests")' > /dev/null 2>&1; then
+            PREFIX="test"
+          fi
+
+          BRANCH_NAME="${PREFIX}/${ISSUE_ID}"
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
           echo "issue_id=${ISSUE_ID}" >> $GITHUB_OUTPUT
           echo "error=false" >> $GITHUB_OUTPUT
