@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.7.1] - 2026-05-22
+
+### Corrigé
+- mettre à jour les workflows CI/CD pour inclure la construction Docker et restreindre les branches de déclenchement (#53)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.7.0 (#51)
+
+
 ## [0.7.0] - 2026-05-22
 
 ### Ajouté
