@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.6.1] - 2026-05-22
+
+### Corrigé
+- Ignorer les modifications du fichier CHANGELOG.md lors des pushs
+
+### Documentation
+- CHANGELOG mis à jour pour v0.5.0 (#43)
+
+
 ## [0.5.0] - 2026-05-20
 
 ### Ajouté
