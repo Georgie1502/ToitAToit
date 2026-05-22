@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.actor != 'github-actions[bot]' &&
-      !startsWith(github.event.head_commit.message, '[DOCS] CHANGELOG')
+      !startsWith(github.event.head_commit.message, 'docs(changelog):')
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,6 @@ jobs:
           from datetime import date
 
           # ── 1. Dernière version sémantique ──────────────────────────────────
-          # Filtre strict : v1.2.3 uniquement, exclut les tags date (v2026.05.09-abc)
           result = subprocess.run(
               ['git', 'tag', '--list', '--sort=-v:refname'],
               capture_output=True, text=True
@@ -53,15 +52,19 @@ jobs:
                   f.write('skip=true\n')
               exit(0)
 
-          # ── 3. Analyse des préfixes ──────────────────────────────────────────
-          PREFIX_MAP = {
-              '[BREAKING]': ('major',  'breaking'),
-              '[ADD]':      ('minor',  'added'),
-              '[FIX]':      ('patch',  'fixed'),
-              '[DESIGN]':   ('patch',  'modified'),
-              '[REFACTOR]': ('patch',  'refactored'),
-              '[DOCS]':     ('patch',  'docs'),
-              '[TEST]':     ('patch',  'tests'),
+          # ── 3. Parse Conventional Commits ────────────────────────────────────
+          # Format : type(scope)!: description  ou  type!: description
+          CONV_RE = re.compile(
+              r'^(?P<type>\w+)(?:\((?P<scope>[^)]+)\))?(?P<breaking>!)?\s*:\s*(?P<desc>.+)$'
+          )
+          TYPE_MAP = {
+              'feat':     ('minor', 'added'),
+              'fix':      ('patch', 'fixed'),
+              'docs':     ('patch', 'docs'),
+              'refactor': ('patch', 'refactored'),
+              'test':     ('patch', 'tests'),
+              'perf':     ('patch', 'fixed'),
+              'style':    ('patch', 'modified'),
           }
           PRIORITY = {'none': 0, 'patch': 1, 'minor': 2, 'major': 3}
 
@@ -69,16 +72,30 @@ jobs:
           sections = {k: [] for k in ['breaking', 'added', 'fixed', 'modified', 'refactored', 'docs', 'tests']}
 
           for commit in commits:
-              for prefix, (bump_type, section) in PREFIX_MAP.items():
-                  if commit.startswith(prefix):
-                      msg = commit[len(prefix):].strip()
-                      sections[section].append(msg)
-                      if PRIORITY[bump_type] > PRIORITY[bump]:
-                          bump = bump_type
-                      break
+              m = CONV_RE.match(commit)
+              if not m:
+                  continue
+              commit_type = m.group('type').lower()
+              scope       = m.group('scope') or ''
+              is_breaking = bool(m.group('breaking'))
+              desc        = m.group('desc').strip()
+              formatted   = f'**{scope}**: {desc}' if scope else desc
+
+              if is_breaking:
+                  sections['breaking'].append(formatted)
+                  if PRIORITY['major'] > PRIORITY[bump]:
+                      bump = 'major'
+                  continue
+
+              if commit_type not in TYPE_MAP:
+                  continue
+              bump_type, section = TYPE_MAP[commit_type]
+              sections[section].append(formatted)
+              if PRIORITY[bump_type] > PRIORITY[bump]:
+                  bump = bump_type
 
           if bump == 'none':
-              print("Aucun commit avec préfixe reconnu — CHANGELOG inchangé.")
+              print("Aucun commit conventionnel reconnu — CHANGELOG inchangé.")
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write('skip=true\n')
               exit(0)
@@ -141,10 +158,10 @@ jobs:
           BRANCH="docs/changelog-v${{ steps.generate.outputs.new_version }}"
           git checkout -b "$BRANCH"
           git add CHANGELOG.md
-          git commit -m "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}"
+          git commit -m "docs(changelog): update CHANGELOG for v${{ steps.generate.outputs.new_version }}"
           git push --force origin "$BRANCH"
           gh pr create \
-            --title "[DOCS] CHANGELOG mis à jour pour v${{ steps.generate.outputs.new_version }}" \
+            --title "docs(changelog): update CHANGELOG for v${{ steps.generate.outputs.new_version }}" \
             --body "Mise à jour automatique du CHANGELOG — aucune modification de code." \
             --base main \
             --head "$BRANCH"
