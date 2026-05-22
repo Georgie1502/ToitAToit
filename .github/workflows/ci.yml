@@ -3,8 +3,12 @@ name: CI — Tests & Lint
 on:
   push:
     branches: ["**"]
+    paths-ignore:
+      - 'CHANGELOG.md'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'CHANGELOG.md'
 
 jobs:
   # ── users-service ────────────────────────────────────────────────────────────
