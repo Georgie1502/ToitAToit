@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.7.0] - 2026-05-22
+
+### Ajouté
+- ajouter la validation des titres de PR et configurer commitlint (#50)
+
+
 ## [0.6.1] - 2026-05-22
 
 ### Corrigé
