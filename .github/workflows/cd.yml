@@ -3,6 +3,8 @@ name: CD — Build & Deploy
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'CHANGELOG.md'
 
 jobs:
   # ── Build & push toutes les images Docker ────────────────────────────────────
