@@ -9,6 +9,13 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.7.2] - 2026-05-22
+
+### Documentation
+- ajouter des modèles pour les rapports de bogues et les demandes de fonctionnalités, et mettre à jour le modèle de PR (#56)
+- **changelog**: update CHANGELOG for v0.7.1 (#54)
+
+
 ## [0.7.1] - 2026-05-22
 
 ### Corrigé
