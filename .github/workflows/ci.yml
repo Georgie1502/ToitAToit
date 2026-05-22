@@ -11,6 +11,28 @@ on:
       - 'CHANGELOG.md'
 
 jobs:
+  # ── validation titre PR (Conventional Commits) ───────────────────────────────
+  lint-pr-title:
+    name: Lint PR title
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            refactor
+            test
+            chore
+            perf
+            style
+            build
+            ci
+
   # ── users-service ────────────────────────────────────────────────────────────
   test-users-service:
     name: Tests — users-service

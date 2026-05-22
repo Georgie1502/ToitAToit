@@ -1,6 +1,6 @@
 # Contribuer à Toit à Toit
 
-Merci de contribuer à la plateforme de colocation Toit à Toit ! Bug, idée ou feature : toute aide est la bienvenue. Ce guide explique comment signaler un problème, ouvrir une branche et soumettre une pull request.
+Merci de contribuer à la plateforme Toit à Toit ! Bug, idée ou feature : toute aide est la bienvenue. Ce guide explique comment signaler un problème, ouvrir une branche et soumettre une pull request.
 
 ## Création d'une issue
 
@@ -20,15 +20,17 @@ TOIT-2001 Correction du bug de déconnexion
 TOIT-7001 Mise à jour du README gateway
 ```
 
-> ⚠️ Si le titre ne respecte pas ce format, la création automatique de branche échouera. Le workflow commentera l'issue pour vous en informer. Il faudra alors créer la branche manuellement (voir ci-dessous).
+> Si le titre ne respecte pas ce format, la création automatique de branche échouera. Le workflow commentera l'issue pour vous en informer.
 
 ### Types d'issues
 
 | Type | Quand l'utiliser |
 |---|---|
-| ADD| Nouvelle fonctionnalité ou amélioration |
-| FIX | Comportement inattendu ou erreur |
-| DOCS | Documentation manquante ou incorrecte |
+| feat | Nouvelle fonctionnalité ou amélioration |
+| fix | Comportement inattendu ou erreur |
+| docs | Documentation manquante ou incorrecte |
+| refactor | Restructuration du code sans changement de comportement |
+| test | Ajout ou correction de tests |
 
 ### Contenu
 
@@ -46,89 +48,131 @@ Titre de l'issue : TOIT-1105 Ajout de la page recherche
 → Branche créée  : feat/TOIT-1105
 ```
 
+Pour les branches créées **manuellement**, ajouter une description courte :
+
+```
+feat/TOIT-1105-page-recherche
+fix/TOIT-2001-bug-deconnexion
+docs/TOIT-7001-readme-gateway
+refactor/TOIT-3001-simplify-auth
+test/TOIT-4001-integration-gateway
+```
+
 ### Format
 
-| Format | Exemple | Usage |
-|---|---|---|
-| `feat/TOIT-XXXX` | `feat/TOIT-1105` | Créée automatiquement depuis une issue |
-| `fix/TOIT-XXXX` | `fix/TOIT-2001` | Correctif urgent, créée manuellement |
-| `docs/TOIT-XXXX` | `docs/TOIT-7001` | Documentation, créée manuellement |
+| Préfixe | Usage |
+|---|---|
+| `feat/TOIT-XXXX` | Nouvelle fonctionnalité (créée automatiquement depuis une issue) |
+| `feat/TOIT-XXXX-description` | Nouvelle fonctionnalité (créée manuellement) |
+| `fix/TOIT-XXXX-description` | Correctif |
+| `docs/TOIT-XXXX-description` | Documentation |
+| `refactor/TOIT-XXXX-description` | Refactorisation |
+| `test/TOIT-XXXX-description` | Tests |
 
 ### Règles
 
 - Un seul sujet par branche.
 - Toujours partir de `main` comme base.
+- Ouvrir la PR en **Draft** dès le premier commit pour signaler le travail en cours.
+- Cibler moins de 400 lignes modifiées par PR.
 
-## Développement
+## Installation locale
 
-- Lire les READMEs locaux (gateway, services, frontend) pour les bonnes pratiques.
-- Utiliser une syntaxe moderne (async/await, const/let) et garder le code lisible.
-- Ne jamais committer de secrets ; utiliser des `.env` et `.env.example`.
-- Respecter la configuration ESLint (`npm run lint`) et Prettier (`.prettierrc`).
+Depuis la racine du projet, installer les dépendances (dont husky pour les hooks git) :
+
+```bash
+npm install
+```
+
+> Cette commande installe automatiquement les hooks git via husky. Toute tentative de commit avec un message invalide sera bloquée localement.
 
 ## Messages de commit
 
-Chaque message de commit **doit** commencer par un préfixe entre crochets. Ce préfixe détermine automatiquement le type de version incrémentée et la section générée dans le `CHANGELOG.md`.
+Le projet suit la convention **[Conventional Commits](https://www.conventionalcommits.org/)**, vérifiée automatiquement par commitlint et husky à chaque commit.
 
 ### Format
 
 ```
-[PRÉFIXE] Description courte et claire
+type(scope): description courte
 ```
 
-### Préfixes disponibles
+- **type** — obligatoire, voir tableau ci-dessous
+- **scope** — optionnel, nom du service ou du module concerné
+- **description** — courte, en minuscules, sans point final
 
-| Préfixe | Pour quoi | Impact sur la version |
+### Types disponibles
+
+| Type | Usage | Impact version |
 |---|---|---|
-| `[ADD]` | Nouvelle fonctionnalité | MINEUR `0.8.9 → 0.9.0` |
-| `[FIX]` | Correction de bug | PATCH `0.8.9 → 0.8.10` |
-| `[DESIGN]` | Interface / visuel | PATCH |
-| `[REFACTOR]` | Refactorisation interne | PATCH |
-| `[DOCS]` | Documentation | PATCH |
-| `[TEST]` | Tests | PATCH |
-| `[BREAKING]` | Changement non rétrocompatible | MAJEUR `0.8.9 → 1.0.0` |
+| `feat` | Nouvelle fonctionnalité | MINEUR `0.8.9 → 0.9.0` |
+| `fix` | Correction de bug | PATCH `0.8.9 → 0.8.10` |
+| `docs` | Documentation | PATCH |
+| `refactor` | Refactorisation interne | PATCH |
+| `test` | Ajout ou correction de tests | PATCH |
+| `perf` | Amélioration de performance | PATCH |
+| `style` | Mise en forme, CSS | PATCH |
+| `chore` | Maintenance (dépendances, config) | aucun |
+| `build` | Système de build, Docker | aucun |
+| `ci` | Pipelines CI/CD | aucun |
+| `feat!` ou `fix!` | Changement non rétrocompatible | MAJEUR `0.8.9 → 1.0.0` |
 
-### Règle de priorité
-
-Si une PR contient plusieurs commits, le plus impactant l'emporte.
-Exemple : 1 `[ADD]` + 3 `[FIX]` → version **MINEUR** incrémentée.
-
-### Exemples
+### Exemples valides
 
 ```bash
-git commit -m "[ADD] Ajout de la page recherche avancée"
-git commit -m "[FIX] Correction du bug de déconnexion automatique"
-git commit -m "[DESIGN] Changement de couleur des badges de statut"
-git commit -m "[REFACTOR] Centralisation du service d'appel API"
-git commit -m "[TEST] Ajout des tests unitaires du contrôleur messages"
-git commit -m "[DOCS] Mise à jour du README avec les nouvelles routes"
-git commit -m "[BREAKING] Suppression de l'ancien endpoint /api/v1/users"
+git commit -m "feat(frontend): add mobile navigation menu"
+git commit -m "fix(gateway): resolve JWT timeout on long requests"
+git commit -m "refactor(users): simplify password validation logic"
+git commit -m "test(gateway): add integration tests for auth routes"
+git commit -m "docs(readme): update setup instructions"
+git commit -m "feat!: rename colocations-service to annonces-service"
 ```
 
-> **Règle d'or** : en lisant le message, on doit savoir exactement ce qui a changé.
+### Exemples invalides (bloqués par husky)
 
-> ⚠️ Un commit sans préfixe reconnu sera ignoré dans le CHANGELOG automatique.
+```bash
+git commit -m "fix typo"          # pas de type Conventional Commits
+git commit -m "WIP"               # pas de type
+git commit -m "Update stuff"      # pas de type, majuscule
+git commit -m "[ADD] new feature" # ancien format, non reconnu
+```
+
+### Règle de priorité pour le versionnage
+
+Si une PR contient plusieurs commits, le plus impactant l'emporte.
+Exemple : 1 `feat` + 3 `fix` → version **MINEUR** incrémentée.
 
 ### CHANGELOG automatique
 
-À chaque merge sur `main`, GitHub Actions lit les messages de tous les commits, les catégorise et met à jour `CHANGELOG.md` automatiquement :
+À chaque merge sur `main`, GitHub Actions lit les commits, les catégorise et met à jour `CHANGELOG.md` automatiquement :
 
-| Préfixe | Section dans le CHANGELOG |
+| Type | Section dans le CHANGELOG |
 |---|---|
-| `[ADD]` | ### Ajouté |
-| `[FIX]` | ### Corrigé |
-| `[DESIGN]` | ### Modifié |
-| `[REFACTOR]` | ### Refactorisé |
-| `[DOCS]` | ### Documentation |
-| `[TEST]` | ### Tests |
-| `[BREAKING]` | ### Changements majeurs |
+| `feat` | Ajouté |
+| `fix`, `perf` | Corrigé |
+| `style` | Modifié |
+| `refactor` | Refactorisé |
+| `docs` | Documentation |
+| `test` | Tests |
+| `feat!`, `fix!` | Changements majeurs |
+| `chore`, `build`, `ci` | non tracés dans le CHANGELOG |
+
+## Titre de Pull Request
+
+Le titre de la PR **doit** suivre le même format Conventional Commits — il deviendra le message du commit squash sur `main` :
+
+```
+feat(frontend): add mobile navigation menu
+fix(gateway): resolve JWT timeout
+refactor(users): simplify validation
+```
+
+Le CI valide automatiquement le titre avant tout merge.
 
 ## Tests
 
 Avant toute PR, s'assurer que tous les tests passent :
 
 ```bash
-# Depuis la racine du projet
 (cd backend/gateway && npm test)
 (cd backend/users-service && npm test)
 (cd backend/colocations-service && npm test)
@@ -140,10 +184,12 @@ La couverture minimale exigée est de **70 %** par service backend. Ajouter ou m
 
 ## Pull Request
 
-1. Pousser la branche et ouvrir une PR vers `main`.
-2. Décrire clairement les changements et l'issue liée (ex. `Closes #123`).
-3. Joindre si possible captures ou logs utiles.
-4. Demander une revue. Corriger les retours avant fusion.
-5. Le CHANGELOG sera mis à jour automatiquement après le merge.
+1. Ouvrir la PR en **Draft** dès le premier commit.
+2. Passer en **Ready for review** uniquement quand le travail est terminé.
+3. Décrire clairement les changements et lier l'issue (`Closes #123`).
+4. Attendre que le CI soit vert avant de demander une revue.
+5. Minimum **1 approbation** requise avant merge.
+6. Merger en **Squash merge** uniquement.
+7. Le CHANGELOG sera mis à jour automatiquement après le merge.
 
-Merci de votre contribution : elle aide à faire évoluer Toit à Toit pour tous les colocataires !
+Merci de votre contribution !
