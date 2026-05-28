@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.8.0] - 2026-05-28
+
+### Ajouté
+- **listings**: ajouter la récupération des annonces de l'utilisateur connecté (#60)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.7.2 (#57)
+
+
 ## [0.7.2] - 2026-05-22
 
 ### Documentation
