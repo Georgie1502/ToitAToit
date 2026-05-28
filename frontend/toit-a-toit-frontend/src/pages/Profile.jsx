@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../components/atoms';
 import { ProfileBadgesCard, ProfileHeroCard, ProfileStoryAndListings } from '../components/organisms';
 import { PageShell } from '../components/templates';
 import { getCurrentUser } from '../services/auth';
