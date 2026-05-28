@@ -65,9 +65,7 @@ describe("authController.signup", () => {
     );
     expect(res.cookie).toHaveBeenCalledWith("token", "fake-token", expect.any(Object));
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ token: "fake-token", user: expect.objectContaining({ email: "john@test.com" }) })
-    );
+    expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur inscrit avec succes" });
   });
 
   it("normalise l'email en minuscules", async () => {
@@ -191,8 +189,7 @@ describe("authController.login", () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "Connexion reussie",
-        token: "fake-token",
-        user: expect.objectContaining({ id: "uuid-1" }),
+        user: expect.objectContaining({ username: "john", email: "a@b.com" }),
       })
     );
   });
