@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.9.0] - 2026-05-28
+
+### Ajouté
+- **listings**: supprimer le champ statut trompeur et ajouter un écran de confirmation (#64)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.8.0 (#61)
+
+
 ## [0.8.0] - 2026-05-28
 
 ### Ajouté
