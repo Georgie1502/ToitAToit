@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../components/atoms';
 import { ProfileBadgesCard, ProfileHeroCard, ProfileStoryAndListings } from '../components/organisms';
 import { PageShell } from '../components/templates';
 import { getCurrentUser } from '../services/auth';
@@ -73,32 +71,6 @@ const Profile = () => {
               />
               <ProfileBadgesCard />
 
-              <div className="rounded-[1.5rem] bg-surfaceContainerLowest p-8 shadow-[0_4px_40px_rgba(38,48,53,0.05)]">
-                <p className="font-headline text-xs font-semibold uppercase tracking-[0.28em] text-primary">Compte</p>
-                <div className="mt-5 grid gap-3">
-                  <div className="rounded-3xl bg-surfaceContainer px-5 py-3">
-                    <p className="font-body text-xs font-semibold uppercase tracking-widest text-muted">Identifiant</p>
-                    <p className="mt-1 font-body text-sm font-semibold text-ink">{user?.id || 'Non renseigné'}</p>
-                  </div>
-                  <div className="rounded-3xl bg-surfaceContainer px-5 py-3">
-                    <p className="font-body text-xs font-semibold uppercase tracking-widest text-muted">Email</p>
-                    <p className="mt-1 font-body text-sm font-semibold text-ink">{user?.email || 'Non renseigné'}</p>
-                  </div>
-                  <div className="rounded-3xl bg-surfaceContainer px-5 py-3">
-                    <p className="font-body text-xs font-semibold uppercase tracking-widest text-muted">Rôle</p>
-                    <p className="mt-1 font-body text-sm font-semibold text-ink">{role || 'À définir — complétez votre onboarding'}</p>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex gap-3">
-                  <Button as={Link} to="/onboarding-role" variant="secondary" size="sm" className="flex-1">
-                    Compléter
-                  </Button>
-                  <Button as={Link} to="/mes-annonces" variant="ghost" size="sm" className="flex-1">
-                    Mes annonces
-                  </Button>
-                </div>
-              </div>
             </aside>
 
             <ProfileStoryAndListings

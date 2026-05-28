@@ -72,6 +72,7 @@ const PublierAnnonce = () => {
   const [ouverture, setOuverture] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -116,13 +117,32 @@ const PublierAnnonce = () => {
       photoFiles.forEach((file) => payload.append('photos', file));
 
       await createListing(payload);
-      navigate('/mes-annonces');
+      setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || "Impossible de soumettre l'annonce.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <PageShell>
+        <div className="mx-auto max-w-xl py-20 text-center space-y-8">
+          <span className="material-symbols-outlined text-7xl" style={{ color: '#16A34A' }}>check_circle</span>
+          <div className="space-y-4">
+            <h1 className="font-display text-4xl text-ink">Annonce soumise !</h1>
+            <p className="font-body text-base text-muted">
+              Votre annonce a bien été enregistrée. L'association Toit à Toit va l'examiner et vous informera prochainement de sa décision.
+            </p>
+          </div>
+          <Button variant="primary" size="lg" onClick={() => navigate('/mes-annonces')}>
+            Voir mes annonces →
+          </Button>
+        </div>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>
