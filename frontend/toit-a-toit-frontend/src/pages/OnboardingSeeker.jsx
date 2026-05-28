@@ -73,6 +73,10 @@ const OnboardingSeeker = () => {
         bio: formData.bio || null,
         phone: formData.phone || null,
       });
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        localStorage.setItem('user', JSON.stringify({ ...JSON.parse(stored), role: 'SEEKER' }));
+      }
       await upsertMyPreferences({
         budget_min: formData.budget_min || null,
         budget_max: formData.budget_max || null,

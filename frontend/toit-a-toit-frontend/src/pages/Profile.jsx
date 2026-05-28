@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { ProfileBadgesCard, ProfileHeroCard, ProfileStoryAndListings } from '../components/organisms';
 import { PageShell } from '../components/templates';
 import { getCurrentUser } from '../services/auth';
-import { listListings } from '../services/colocations';
+import { listMyListings } from '../services/colocations';
 import { getMyProfile } from '../services/profile';
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [listings, setListings] = useState([]);
+  const [userListings, setUserListings] = useState([]);
   const cachedUser = getCurrentUser();
 
   useEffect(() => {
@@ -20,12 +20,12 @@ const Profile = () => {
       try {
         const [profileResponse, listingsResponse] = await Promise.all([
           getMyProfile(),
-          listListings({ status: 'PUBLISHED', limit: 200 }),
+          listMyListings(),
         ]);
 
         if (isMounted) {
           setProfileData(profileResponse);
-          setListings(listingsResponse);
+          setUserListings(listingsResponse.slice(0, 2));
         }
       } catch {
         if (isMounted) setError('Impossible de charger le profil.');
@@ -40,10 +40,6 @@ const Profile = () => {
   const user = profileData?.user || cachedUser;
   const role = profileData?.profile?.role || null;
   const isOwner = role === 'OWNER';
-  const userListings = useMemo(() => {
-    if (!user) return [];
-    return listings.filter((listing) => listing.owner_user_id === user.id).slice(0, 2);
-  }, [listings, user]);
   const locationLabel = profileData?.preferences?.location || user?.city || 'Lyon, France';
   const verificationText = isOwner
     ? 'Le profil a été vérifié par notre équipe via plusieurs éléments de confiance.'

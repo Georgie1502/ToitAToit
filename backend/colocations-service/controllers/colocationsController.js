@@ -163,6 +163,52 @@ exports.listListings = async (req, res) => {
   }
 };
 
+exports.listMyListings = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+        l.id,
+        l.owner_user_id,
+        l.location_id,
+        l.title,
+        l.description,
+        l.rent_amount,
+        l.charges_included,
+        l.surface_m2,
+        l.housing_type,
+        l.available_from,
+        l.available_to,
+        l.min_duration_months,
+        l.status,
+        l.created_at,
+        l.updated_at,
+        loc.city,
+        loc.postal_code,
+        loc.address,
+        loc.lat,
+        loc.lng,
+        lp.url AS photo_url
+      FROM listings l
+      JOIN locations loc ON loc.id = l.location_id
+      LEFT JOIN LATERAL (
+        SELECT url
+        FROM listing_photos
+        WHERE listing_id = l.id
+        ORDER BY sort_order ASC, created_at ASC
+        LIMIT 1
+      ) lp ON TRUE
+      WHERE l.owner_user_id = $1
+      ORDER BY l.created_at DESC`,
+      [req.userId],
+    );
+
+    return res.json({ listings: result.rows });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
 exports.getListingById = async (req, res) => {
   try {
     const listingId = req.params.id;
