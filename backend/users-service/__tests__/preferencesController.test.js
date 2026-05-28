@@ -69,10 +69,20 @@ describe("preferencesController.upsertMyPreferences", () => {
     expect(res.json).toHaveBeenCalledWith({ preferences: pref });
   });
 
-  it("retourne 400 si contrainte CHECK violée (code 23514)", async () => {
+  it("retourne 400 si budget_min > budget_max (validation avant requête)", async () => {
+    const req = { userId: "uuid-1", body: { budget_min: 900, budget_max: 100 } };
+    const res = mockRes();
+    await preferencesController.upsertMyPreferences(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: "Le budget minimum ne peut pas être supérieur au budget maximum." });
+    expect(pool.query).not.toHaveBeenCalled();
+  });
+
+  it("retourne 400 si contrainte CHECK violée (code 23514, ex: enum invalide)", async () => {
     pool.query.mockRejectedValue({ code: "23514" });
 
-    const req = { userId: "uuid-1", body: { budget_min: 900, budget_max: 100 } };
+    const req = { userId: "uuid-1", body: { budget_min: 100, budget_max: 900, smoking: "INVALIDE" } };
     const res = mockRes();
     await preferencesController.upsertMyPreferences(req, res);
 
