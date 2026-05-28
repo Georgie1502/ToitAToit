@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.9.1] - 2026-05-28
+
+### Corrigé
+- **preferences**: corriger l'erreur 400 lors de la sauvegarde avec budget_min > budget_max (#66)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.9.0 (#65)
+
+
 ## [0.9.0] - 2026-05-28
 
 ### Ajouté
