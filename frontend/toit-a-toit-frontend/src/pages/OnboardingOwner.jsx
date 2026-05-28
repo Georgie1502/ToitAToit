@@ -15,12 +15,13 @@ const OnboardingOwner = () => {
     birth_date: '', gender: '', occupation_status: '', bio: '',
     title: '', description: '', rent_amount: '', charges_included: false,
     surface_m2: '', housing_type: '', available_from: '', available_to: '',
-    min_duration_months: '', status: 'DRAFT', city: '', postal_code: '', address: '',
+    min_duration_months: '', city: '', postal_code: '', address: '',
     photo_urls: '/annonces/appartement.jpg\n/annonces/chambre.jpg\n/annonces/salon.jpg',
   });
   const [photoFiles, setPhotoFiles] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -65,7 +66,6 @@ const OnboardingOwner = () => {
         ['available_from', formData.available_from],
         ['available_to', formData.available_to || ''],
         ['min_duration_months', formData.min_duration_months || ''],
-        ['status', formData.status],
         ['city', formData.city],
         ['postal_code', formData.postal_code],
         ['address', formData.address || ''],
@@ -74,13 +74,32 @@ const OnboardingOwner = () => {
       photoFiles.forEach((file) => payload.append('photos', file));
 
       await createListing(payload);
-      navigate('/profile');
+      setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Impossible de créer votre annonce.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <PageShell>
+        <div className="mx-auto max-w-xl py-20 text-center space-y-8">
+          <span className="material-symbols-outlined text-7xl" style={{ color: '#16A34A' }}>check_circle</span>
+          <div className="space-y-4">
+            <h2 className="font-display text-4xl text-ink">Annonce soumise !</h2>
+            <p className="font-body text-base text-muted">
+              Votre annonce a bien été enregistrée. L'association va l'examiner et vous informera prochainement de sa décision.
+            </p>
+          </div>
+          <Button variant="primary" size="lg" onClick={() => navigate('/mes-annonces')}>
+            Voir mes annonces →
+          </Button>
+        </div>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>
@@ -176,13 +195,6 @@ const OnboardingOwner = () => {
                   <label className="flex flex-col gap-2 font-body text-sm font-semibold text-ink">
                     Durée minimale (mois)
                     <input type="number" name="min_duration_months" value={formData.min_duration_months} onChange={handleChange} className={field} min="0" />
-                  </label>
-                  <label className="flex flex-col gap-2 font-body text-sm font-semibold text-ink">
-                    Statut
-                    <select name="status" value={formData.status} onChange={handleChange} className={field}>
-                      <option value="DRAFT">Brouillon</option>
-                      <option value="PUBLISHED">Publié</option>
-                    </select>
                   </label>
                   <label className="flex flex-col gap-2 font-body text-sm font-semibold text-ink sm:col-span-2">
                     Photos (1 URL par ligne)
