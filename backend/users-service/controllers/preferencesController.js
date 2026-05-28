@@ -16,14 +16,18 @@ exports.getMyPreferences = async (req, res) => {
 exports.upsertMyPreferences = async (req, res) => {
   try {
     const userId = req.userId;
-    const budgetMin = req.body.budget_min ?? null;
-    const budgetMax = req.body.budget_max ?? null;
-    const location = req.body.location ?? null;
-    const smoking = req.body.smoking ?? null;
-    const pets = req.body.pets ?? null;
-    const noiseLevel = req.body.noise_level ?? null;
-    const guestsPolicy = req.body.guests_policy ?? null;
-    const lifestyleNotes = req.body.lifestyle_notes ?? null;
+    const budgetMin = req.body.budget_min ? Number(req.body.budget_min) : null;
+    const budgetMax = req.body.budget_max ? Number(req.body.budget_max) : null;
+    const location = req.body.location || null;
+    const smoking = req.body.smoking || null;
+    const pets = req.body.pets || null;
+    const noiseLevel = req.body.noise_level || null;
+    const guestsPolicy = req.body.guests_policy || null;
+    const lifestyleNotes = req.body.lifestyle_notes || null;
+
+    if (budgetMin !== null && budgetMax !== null && budgetMin > budgetMax) {
+      return res.status(400).json({ message: 'Le budget minimum ne peut pas être supérieur au budget maximum.' });
+    }
 
     const result = await pool.query(
       `INSERT INTO profile_preferences (
