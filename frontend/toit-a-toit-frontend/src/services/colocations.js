@@ -24,3 +24,8 @@ export const deleteListing = async (id) => {
   const response = await api.delete(`/api/colocations/${id}`);
   return response.data;
 };
+
+export const listMyListings = async () => {
+  const response = await api.get('/api/colocations/my-listings');
+  return response.data?.listings || [];
+};

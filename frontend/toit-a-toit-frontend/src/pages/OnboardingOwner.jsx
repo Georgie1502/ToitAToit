@@ -50,6 +50,10 @@ const OnboardingOwner = () => {
         occupation_status: formData.occupation_status || null,
         bio: formData.bio || null,
       });
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        localStorage.setItem('user', JSON.stringify({ ...JSON.parse(stored), role: 'OWNER' }));
+      }
       const payload = new FormData();
       [
         ['title', formData.title],

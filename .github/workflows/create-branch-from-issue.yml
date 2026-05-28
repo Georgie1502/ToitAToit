@@ -18,11 +18,11 @@ jobs:
 
       - name: Extract issue details
         id: issue
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          LABELS: ${{ toJson(github.event.issue.labels) }}
         run: |
           set -euo pipefail
-          ISSUE_TITLE="${{ github.event.issue.title }}"
-          LABELS='${{ toJson(github.event.issue.labels) }}'
-
           echo "Titre de l'issue : $ISSUE_TITLE"
 
           # Extraire l'ID de l'issue depuis le titre (ex. TOIT-3002 depuis "TOIT-3002 Create Client Auto Docker Deploy")
@@ -56,9 +56,10 @@ jobs:
       - name: Check branch existence
         id: branch
         if: steps.issue.outputs.error == 'false'
+        env:
+          BRANCH_NAME: ${{ steps.issue.outputs.branch_name }}
         run: |
           set -euo pipefail
-          BRANCH_NAME="${{ steps.issue.outputs.branch_name }}"
 
           if git ls-remote --heads origin "${BRANCH_NAME}" | grep -q "refs/heads/${BRANCH_NAME}"; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -71,20 +72,22 @@ jobs:
 
       - name: Create branch from default
         if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'false'
+        env:
+          BRANCH_NAME: ${{ steps.issue.outputs.branch_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
           echo "Branche par défaut utilisée : ${DEFAULT_BRANCH}"
 
           git fetch origin "${DEFAULT_BRANCH}"
           git checkout "${DEFAULT_BRANCH}"
 
           # Créer la nouvelle branche
-          git checkout -b "${{ steps.issue.outputs.branch_name }}"
-          git push origin "${{ steps.issue.outputs.branch_name }}"
+          git checkout -b "${BRANCH_NAME}"
+          git push origin "${BRANCH_NAME}"
 
       - name: Comment on issue - Success
         if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'false'
@@ -124,29 +127,37 @@ jobs:
 
       - name: Write step summary
         if: always()
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_ERROR: ${{ steps.issue.outputs.error }}
+          ISSUE_MESSAGE: ${{ steps.issue.outputs.message }}
+          ISSUE_ID: ${{ steps.issue.outputs.issue_id }}
+          BRANCH_NAME: ${{ steps.issue.outputs.branch_name }}
+          BRANCH_EXISTS: ${{ steps.branch.outputs.exists }}
         run: |
           set -euo pipefail
           {
             echo "## Créer une branche à partir d'une issue"
             echo
-            echo "- Issue: #${{ github.event.issue.number }}"
-            echo "- Titre : ${{ github.event.issue.title }}"
+            echo "- Issue: #${ISSUE_NUMBER}"
+            echo "- Titre : ${ISSUE_TITLE}"
           } >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ steps.issue.outputs.error }}" = "true" ]; then
+          if [ "${ISSUE_ERROR}" = "true" ]; then
             {
               echo "- Statut : Échec"
-              echo "- Raison : ${{ steps.issue.outputs.message }}"
+              echo "- Raison : ${ISSUE_MESSAGE}"
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
 
           {
-            echo "- ID issue : ${{ steps.issue.outputs.issue_id }}"
-            echo "- Branche : ${{ steps.issue.outputs.branch_name }}"
+            echo "- ID issue : ${ISSUE_ID}"
+            echo "- Branche : ${BRANCH_NAME}"
           } >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ steps.branch.outputs.exists }}" = "true" ]; then
+          if [ "${BRANCH_EXISTS}" = "true" ]; then
             echo "- Statut : La branche existe déjà" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "- Statut : Branche créée" >> "$GITHUB_STEP_SUMMARY"

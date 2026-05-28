@@ -37,8 +37,6 @@ exports.signup = async (req, res) => {
 
     return res.status(201).json({
       message: "Utilisateur inscrit avec succes",
-      user: { id: userId, username, email },
-      token,
     });
   } catch (err) {
     if (err.code === "23505") {
@@ -99,8 +97,7 @@ exports.login = async (req, res) => {
 
     return res.json({
       message: "Connexion reussie",
-      user: { id: user.id, username: user.username, email: user.email, role },
-      token,
+      user: { username: user.username, email: user.email, role },
     });
   } catch (err) {
     console.error(err);

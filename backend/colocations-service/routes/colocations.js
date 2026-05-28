@@ -37,6 +37,7 @@ router.get("/admin/published-listings", authMiddleware, requireAssociation, colo
 router.patch("/admin/listings/:id/status", authMiddleware, requireAssociation, colocationsController.updateListingStatus);
 
 router.get("/", colocationsController.listListings);
+router.get("/my-listings", authMiddleware, colocationsController.listMyListings);
 router.get("/search/location", colocationsController.searchByLocation);
 
 // Favorites

@@ -1,20 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { ListingCard } from '../components/molecules';
 import { PageShell } from '../components/templates';
-import { getCurrentUser } from '../services/auth';
-import { deleteListing, listListings, updateListing } from '../services/colocations';
+import { deleteListing, listMyListings, updateListing } from '../services/colocations';
 
 const field =
   'w-full rounded-full border border-ink/10 bg-surface px-5 py-3 font-body text-sm text-ink shadow-soft transition placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
 const fieldArea =
   'w-full rounded-3xl border border-ink/10 bg-surface px-5 py-3 font-body text-sm text-ink shadow-soft transition placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
 
-const STATUSES = ['DRAFT', 'PUBLISHED', 'PAUSED', 'CLOSED'];
-
 const MyListings = () => {
-  const user = getCurrentUser();
   const [listings, setListings] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -22,20 +18,14 @@ const MyListings = () => {
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
 
-  const myListings = useMemo(() => {
-    if (!user) return [];
-    return listings.filter((l) => l.owner_user_id === user.id);
-  }, [listings, user]);
-
   useEffect(() => {
     let isMounted = true;
     const load = async () => {
       setLoading(true);
       setError('');
       try {
-        const results = await Promise.all(STATUSES.map((s) => listListings({ status: s, limit: 200 })));
-        const unique = Array.from(new Map(results.flat().map((i) => [i.id, i])).values());
-        if (isMounted) setListings(unique);
+        const data = await listMyListings();
+        if (isMounted) setListings(data);
       } catch {
         if (isMounted) setError('Impossible de charger vos annonces.');
       } finally {
@@ -123,7 +113,7 @@ const MyListings = () => {
 
         {loading ? <p className="font-body text-sm text-muted">Chargement de vos annonces...</p> : null}
 
-        {!loading && myListings.length === 0 ? (
+        {!loading && listings.length === 0 ? (
           <div className="rounded-3xl bg-surface p-10 text-center shadow-soft">
             <p className="font-display text-xl text-ink">Aucune annonce</p>
             <p className="mt-2 font-body text-sm text-muted">Créez-en une depuis l'onboarding ou le bouton ci-dessus.</p>
@@ -131,7 +121,7 @@ const MyListings = () => {
         ) : null}
 
         <div className="grid gap-6 lg:grid-cols-2">
-          {myListings.map((listing) => (
+          {listings.map((listing) => (
             <div key={listing.id} className="space-y-4">
               <ListingCard
                 listing={listing}
