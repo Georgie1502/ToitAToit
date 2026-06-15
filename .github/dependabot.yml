@@ -1,0 +1,92 @@
+version: 2
+updates:
+
+  # ── GitHub Actions ────────────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "ci"]
+
+  # ── npm : racine (husky, commitlint) ─────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels: ["dependencies"]
+
+  # ── npm : frontend ────────────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/frontend/toit-a-toit-frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels: ["dependencies", "frontend"]
+
+  # ── npm : gateway ─────────────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/backend/gateway"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels: ["dependencies", "backend"]
+
+  # ── npm : users-service ───────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/backend/users-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels: ["dependencies", "backend"]
+
+  # ── npm : colocations-service ─────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/backend/colocations-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels: ["dependencies", "backend"]
+
+  # ── npm : messages-service ────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/backend/messages-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels: ["dependencies", "backend"]
+
+  # ── Docker : frontend ─────────────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/frontend/toit-a-toit-frontend"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "docker", "frontend"]
+
+  # ── Docker : gateway ──────────────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/backend/gateway"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "docker", "backend"]
+
+  # ── Docker : users-service ────────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/backend/users-service"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "docker", "backend"]
+
+  # ── Docker : colocations-service ──────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/backend/colocations-service"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "docker", "backend"]
+
+  # ── Docker : messages-service ─────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/backend/messages-service"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "docker", "backend"]
