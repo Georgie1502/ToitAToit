@@ -63,6 +63,9 @@ const OnboardingSeeker = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (formData.budget_min && formData.budget_max && Number(formData.budget_min) > Number(formData.budget_max)) {
+      return setError('Le budget minimum ne peut pas être supérieur au budget maximum.');
+    }
     setLoading(true);
     try {
       await upsertMyProfile({
