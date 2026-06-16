@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.10.0] - 2026-06-16
+
+### Ajouté
+- **deps**: configurer dependabot et corriger les vulnérabilités de sécurité npm (#109)
+
+
 ## [0.9.1] - 2026-05-28
 
 ### Corrigé
