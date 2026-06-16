@@ -91,7 +91,7 @@ jobs:
 
       - name: Comment on issue - Success
         if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'false'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             github.rest.issues.createComment({
@@ -103,7 +103,7 @@ jobs:
 
       - name: Comment on issue - Branch exists
         if: steps.issue.outputs.error == 'false' && steps.branch.outputs.exists == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             github.rest.issues.createComment({
@@ -115,7 +115,7 @@ jobs:
 
       - name: Comment on issue - Error
         if: steps.issue.outputs.error == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             github.rest.issues.createComment({
