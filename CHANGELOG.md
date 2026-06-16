@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.9.2] - 2026-06-16
+
+### Corrigé
+- **deps**: corriger la vulnérabilité critique shell-quote dans le frontend (#69)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.9.1 (#67)
+
+
 ## [0.9.1] - 2026-05-28
 
 ### Corrigé
