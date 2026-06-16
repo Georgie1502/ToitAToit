@@ -86,6 +86,82 @@ npm install
 
 > Cette commande installe automatiquement les hooks git via husky. Toute tentative de commit avec un message invalide sera bloquée localement.
 
+## Gestion des dépendances
+
+### Surveillance des versions
+
+Les mises à jour de dépendances sont surveillées automatiquement par **Dependabot** :
+
+| Écosystème | Périmètre | Fréquence |
+|---|---|---|
+| npm | racine, frontend, gateway, users-service, colocations-service, messages-service | hebdomadaire (lundi) |
+| Docker | tous les services | mensuelle |
+| GitHub Actions | workflows CI/CD | mensuelle |
+
+Dependabot ouvre une PR distincte par dépendance mise à jour, avec le label `dependencies`.
+
+### Process de mise à jour
+
+Toute mise à jour de dépendance — qu'elle vienne de Dependabot ou d'une initiative manuelle — suit ce processus :
+
+```
+Détection → Évaluation de l'impact → Validation CI → Merge
+```
+
+**1. Détection**
+
+Dependabot ouvre automatiquement une PR. Pour vérifier manuellement l'état des dépendances :
+
+```bash
+# Lister les dépendances obsolètes d'un service
+(cd backend/users-service && npm outdated)
+(cd backend/colocations-service && npm outdated)
+(cd backend/messages-service && npm outdated)
+(cd backend/gateway && npm outdated)
+(cd frontend/toit-a-toit-frontend && npm outdated)
+```
+
+**2. Évaluation de l'impact**
+
+Avant d'approuver ou d'ouvrir une PR de mise à jour, évaluer :
+
+- **Type de version** — patch (`1.0.x`) : risque faible ; minor (`1.x.0`) : vérifier le changelog ; major (`x.0.0`) : revue approfondie obligatoire.
+- **Audit de sécurité** — consulter le rapport d'audit généré par le CI ou le lancer manuellement :
+
+```bash
+(cd backend/users-service && npm audit)
+(cd frontend/toit-a-toit-frontend && npm audit)
+```
+
+- **Changelog de la bibliothèque** — identifier les breaking changes ou dépréciations.
+- **Tests impactés** — relancer la suite de tests du service concerné (voir section [Tests](#tests)).
+
+**3. Validation CI**
+
+Le CI vérifie automatiquement chaque PR de dépendance :
+
+- `npm audit --audit-level=high` (backends) / `--audit-level=critical` (frontend)
+- Lint + suite de tests complète du service concerné
+- Build Docker de validation
+
+Une PR de mise à jour ne peut être mergée que si **le CI est entièrement vert**.
+
+**4. Merge**
+
+Appliquer les mêmes règles qu'une PR standard :
+- Titre au format Conventional Commits : `chore(deps): update express to v5.1.0`
+- Minimum 1 approbation.
+- Squash merge uniquement.
+
+### Critères d'acceptation / refus
+
+| Situation | Décision |
+|---|---|
+| Patch ou minor, CI vert, pas de breaking change | Accepter |
+| Major avec breaking changes documentés et tests adaptés | Accepter après revue |
+| Vulnérabilité critique non corrigée par la mise à jour | Bloquer, ouvrir une issue |
+| CI rouge après mise à jour | Refuser, investiguer avant merge |
+
 ## Messages de commit
 
 Le projet suit la convention **[Conventional Commits](https://www.conventionalcommits.org/)**, vérifiée automatiquement par commitlint et husky à chaque commit.
