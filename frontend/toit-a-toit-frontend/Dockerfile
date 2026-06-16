@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:26-alpine AS base
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # ── Stage production ──────────────────────────────────────────────────────────
-FROM node:20-alpine AS production
+FROM node:26-alpine AS production
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=build /app/build ./build
