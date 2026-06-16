@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.10.1] - 2026-06-16
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.10.0 (#110)
+
+
 ## [0.10.0] - 2026-06-16
 
 ### Ajouté
