@@ -22,12 +22,27 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use("/uploads", express.static(UPLOAD_DIR));
 
-app.get("/health", (req, res) => {
-  res.json({
-    status: "healthy",
-    service: "colocations-service",
-    timestamp: new Date().toISOString(),
-  });
+app.get("/health", async (req, res) => {
+  const start = Date.now();
+  try {
+    const pool = require("./config/db");
+    await pool.query("SELECT 1");
+    res.json({
+      status: "healthy",
+      service: "colocations-service",
+      db: "connected",
+      responseTime: `${Date.now() - start}ms`,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    res.status(503).json({
+      status: "degraded",
+      service: "colocations-service",
+      db: "disconnected",
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 // OpenAPI / Swagger UI
