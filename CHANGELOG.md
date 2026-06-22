@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.11.0] - 2026-06-22
+
+### Ajouté
+- **supervision**: ajouter les endpoints /health, Uptime Kuma et le workflow de surveillance automatique (#131)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.10.1 (#129)
+
+
 ## [0.10.1] - 2026-06-16
 
 ### Documentation
