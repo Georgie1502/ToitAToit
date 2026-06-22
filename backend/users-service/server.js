@@ -18,8 +18,27 @@ app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.get('/health', (req, res) => {
-    res.json({ status: 'healthy', service: 'users-service', timestamp: new Date().toISOString() });
+app.get('/health', async (req, res) => {
+    const start = Date.now();
+    try {
+        const pool = require('./config/db');
+        await pool.query('SELECT 1');
+        res.json({
+            status: 'healthy',
+            service: 'users-service',
+            db: 'connected',
+            responseTime: `${Date.now() - start}ms`,
+            timestamp: new Date().toISOString(),
+        });
+    } catch (err) {
+        res.status(503).json({
+            status: 'degraded',
+            service: 'users-service',
+            db: 'disconnected',
+            error: err.message,
+            timestamp: new Date().toISOString(),
+        });
+    }
 });
 
 // OpenAPI / Swagger UI

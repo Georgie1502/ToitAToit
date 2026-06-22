@@ -40,10 +40,11 @@ const createServiceProxy = (serviceKey, pathRewrite = {}) => {
 };
 
 /**
- * Vérifie la santé d'un service
+ * Vérifie la santé d'un service et mesure son temps de réponse
  * @param {string} serviceUrl - URL du service à vérifier
  */
 const checkServiceHealth = async (serviceUrl) => {
+  const start = Date.now();
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
@@ -53,9 +54,23 @@ const checkServiceHealth = async (serviceUrl) => {
     });
 
     clearTimeout(timeout);
-    return response.ok;
+    const responseTime = Date.now() - start;
+    const body = await response.json().catch(() => ({}));
+
+    return {
+      healthy: response.ok,
+      responseTime: `${responseTime}ms`,
+      db: body.db || 'unknown',
+      status: body.status || (response.ok ? 'healthy' : 'degraded'),
+    };
   } catch (error) {
-    return false;
+    return {
+      healthy: false,
+      responseTime: `${Date.now() - start}ms`,
+      db: 'unknown',
+      status: 'unreachable',
+      error: error.message,
+    };
   }
 };
 
@@ -66,10 +81,11 @@ const checkAllServicesHealth = async () => {
   const healthStatus = {};
 
   for (const [key, service] of Object.entries(SERVICES)) {
+    const result = await checkServiceHealth(service.url);
     healthStatus[key.toLowerCase()] = {
       name: service.name,
       url: service.url,
-      healthy: await checkServiceHealth(service.url)
+      ...result,
     };
   }
 

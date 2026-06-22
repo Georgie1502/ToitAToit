@@ -102,7 +102,7 @@ Dependabot ouvre une PR distincte par dépendance mise à jour, avec le label `d
 
 ### Process de mise à jour
 
-Toute mise à jour de dépendance — qu'elle vienne de Dependabot ou d'une initiative manuelle — suit ce processus :
+Toute mise à jour de dépendance - qu'elle vienne de Dependabot ou d'une initiative manuelle - suit ce processus :
 
 ```
 Détection → Évaluation de l'impact → Validation CI → Merge
@@ -125,16 +125,16 @@ Dependabot ouvre automatiquement une PR. Pour vérifier manuellement l'état des
 
 Avant d'approuver ou d'ouvrir une PR de mise à jour, évaluer :
 
-- **Type de version** — patch (`1.0.x`) : risque faible ; minor (`1.x.0`) : vérifier le changelog ; major (`x.0.0`) : revue approfondie obligatoire.
-- **Audit de sécurité** — consulter le rapport d'audit généré par le CI ou le lancer manuellement :
+- **Type de version** - patch (`1.0.x`) : risque faible ; minor (`1.x.0`) : vérifier le changelog ; major (`x.0.0`) : revue approfondie obligatoire.
+- **Audit de sécurité** - consulter le rapport d'audit généré par le CI ou le lancer manuellement :
 
 ```bash
 (cd backend/users-service && npm audit)
 (cd frontend/toit-a-toit-frontend && npm audit)
 ```
 
-- **Changelog de la bibliothèque** — identifier les breaking changes ou dépréciations.
-- **Tests impactés** — relancer la suite de tests du service concerné (voir section [Tests](#tests)).
+- **Changelog de la bibliothèque** - identifier les breaking changes ou dépréciations.
+- **Tests impactés** - relancer la suite de tests du service concerné (voir section [Tests](#tests)).
 
 **3. Validation CI**
 
@@ -172,9 +172,9 @@ Le projet suit la convention **[Conventional Commits](https://www.conventionalco
 type(scope): description courte
 ```
 
-- **type** — obligatoire, voir tableau ci-dessous
-- **scope** — optionnel, nom du service ou du module concerné
-- **description** — courte, en minuscules, sans point final
+- **type** - obligatoire, voir tableau ci-dessous
+- **scope** - optionnel, nom du service ou du module concerné
+- **description** - courte, en minuscules, sans point final
 
 ### Types disponibles
 
@@ -234,7 +234,7 @@ Exemple : 1 `feat` + 3 `fix` → version **MINEUR** incrémentée.
 
 ## Titre de Pull Request
 
-Le titre de la PR **doit** suivre le même format Conventional Commits — il deviendra le message du commit squash sur `main` :
+Le titre de la PR **doit** suivre le même format Conventional Commits - il deviendra le message du commit squash sur `main` :
 
 ```
 feat(frontend): add mobile navigation menu

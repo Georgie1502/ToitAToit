@@ -1,0 +1,19 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: toit-uptime-kuma
+    ports:
+      - "3005:3001"
+    volumes:
+      - uptime-kuma-data:/app/data
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+volumes:
+  uptime-kuma-data:
+
+networks:
+  backend-network:
+    external: true
+    name: backend-network
