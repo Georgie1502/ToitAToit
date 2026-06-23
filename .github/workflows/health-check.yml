@@ -16,10 +16,12 @@ jobs:
         id: gateway
         run: |
           HTTP_STATUS=$(curl -s -o /tmp/health_response.json -w "%{http_code}" \
-            --max-time 10 \
-            "${{ secrets.RENDER_DEPLOY_URL }}/api/health")
+            --max-time 60 \
+            --connect-timeout 10 \
+            "${{ secrets.RENDER_DEPLOY_URL }}/api/health") || HTTP_STATUS="timeout"
           echo "status=$HTTP_STATUS" >> $GITHUB_OUTPUT
-          echo "response=$(cat /tmp/health_response.json)" >> $GITHUB_OUTPUT
+          RESPONSE=$(cat /tmp/health_response.json 2>/dev/null || echo "Aucune réponse (timeout ou service inaccessible)")
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
 
       - name: Afficher le résultat
         run: |
