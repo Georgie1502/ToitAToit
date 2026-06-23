@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.11.1] - 2026-06-23
+
+### Corrigé
+- **health-check**: augmenter le temps d'attente et gérer les erreurs de réponse (#139)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.11.0 (#132)
+
+
 ## [0.11.0] - 2026-06-22
 
 ### Ajouté
