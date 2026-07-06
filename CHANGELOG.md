@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.11.8] - 2026-07-06
+
+### Corrigé
+- **deps**: ignorer les mises à jour majeures de Tailwind CSS dans Dependabot (#165)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.11.7 (#163)
+
+
 ## [0.11.7] - 2026-07-06
 
 ### Documentation
