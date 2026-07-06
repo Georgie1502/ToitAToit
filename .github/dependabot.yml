@@ -31,6 +31,9 @@ updates:
     groups:
       npm-frontend-patch-minor:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
 
   # ── npm : gateway ─────────────────────────────────────────────────────────────
   - package-ecosystem: "npm"
