@@ -43,6 +43,9 @@ updates:
     groups:
       npm-gateway-patch-minor:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # ── npm : users-service ───────────────────────────────────────────────────────
   - package-ecosystem: "npm"
@@ -55,6 +58,9 @@ updates:
     groups:
       npm-users-patch-minor:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # ── npm : colocations-service ─────────────────────────────────────────────────
   - package-ecosystem: "npm"
@@ -67,6 +73,9 @@ updates:
     groups:
       npm-colocations-patch-minor:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # ── npm : messages-service ────────────────────────────────────────────────────
   - package-ecosystem: "npm"
@@ -79,6 +88,9 @@ updates:
     groups:
       npm-messages-patch-minor:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # ── Docker : frontend ─────────────────────────────────────────────────────────
   - package-ecosystem: "docker"
