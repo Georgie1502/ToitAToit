@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.11.5] - 2026-07-06
+
+### Corrigé
+- **deps**: ignore major version updates for eslint in multiple services (#156)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.11.4 (#144)
+
+
 ## [0.11.4] - 2026-06-25
 
 ### Documentation
