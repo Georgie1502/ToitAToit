@@ -80,7 +80,7 @@ describe("authController.signup", () => {
     expect(callArgs[2]).toBe("john@test.com");
   });
 
-  it("retourne 409 si email déjà utilisé (contrainte users_email)", async () => {
+  it("retourne 409 avec un message generique si email deja utilise (contrainte users_email)", async () => {
     bcrypt.hash.mockResolvedValue("hashed");
     pool.query.mockRejectedValue({ code: "23505", constraint: "users_email_key" });
 
@@ -90,11 +90,11 @@ describe("authController.signup", () => {
 
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Email deja utilise" })
+      expect.objectContaining({ message: "Inscription impossible avec ces informations" })
     );
   });
 
-  it("retourne 409 si username déjà utilisé ", async () => {
+  it("retourne 409 avec un message generique si username deja utilise", async () => {
     bcrypt.hash.mockResolvedValue("hashed");
     pool.query.mockRejectedValue({ code: "23505", constraint: "users_username_key" });
 
@@ -104,7 +104,7 @@ describe("authController.signup", () => {
 
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Nom d'utilisateur deja utilise" })
+      expect.objectContaining({ message: "Inscription impossible avec ces informations" })
     );
   });
 
