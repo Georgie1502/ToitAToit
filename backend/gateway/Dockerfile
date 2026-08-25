@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:26-alpine AS base
 LABEL maintainer="Toit à Toit"
 LABEL description="API Gateway pour architecture microservices"
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . .
 RUN npm test
 
 # ── Stage production ──────────────────────────────────────────────────────────
-FROM node:20-alpine AS production
+FROM node:26-alpine AS production
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
