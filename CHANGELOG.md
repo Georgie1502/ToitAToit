@@ -9,6 +9,16 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.11.12] - 2026-08-25
+
+### Corrigé
+- **profil**: afficher candidatures et messages pour un profil SEEKER (#202)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.11.11 (#199)
+- **changelog**: update CHANGELOG for v0.11.10 (#198)
+
+
 ## [0.11.11] - 2026-08-25
 
 ### Corrigé
