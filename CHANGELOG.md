@@ -13,6 +13,13 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 ### Corrigé
 - **users**: restreindre l'acces aux donnees utilisateurs et l'enumeration de comptes (#195)
+## [0.11.10] - 2026-08-25
+
+### Corrigé
+- **deps**: corriger les vulnerabilites high signalees par npm audit (#197)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.11.9 (#172)
 
 
 ## [0.11.9] - 2026-07-17
