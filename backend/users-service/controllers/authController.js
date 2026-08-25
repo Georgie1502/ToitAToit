@@ -40,14 +40,7 @@ exports.signup = async (req, res) => {
     });
   } catch (err) {
     if (err.code === "23505") {
-      const constraint = err.constraint || "";
-      if (constraint.includes("users_username") || constraint.includes("username")) {
-        return res.status(409).json({ message: "Nom d'utilisateur deja utilise" });
-      }
-      if (constraint.includes("users_email") || constraint.includes("email")) {
-        return res.status(409).json({ message: "Email deja utilise" });
-      }
-      return res.status(409).json({ message: "Utilisateur deja existant" });
+      return res.status(409).json({ message: "Inscription impossible avec ces informations" });
     }
 
     console.error(err);
