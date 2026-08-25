@@ -9,6 +9,12 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.11.11] - 2026-08-25
+
+### Corrigé
+- **users**: restreindre l'acces aux donnees utilisateurs et l'enumeration de comptes (#195)
+
+
 ## [0.11.9] - 2026-07-17
 
 ### Documentation
