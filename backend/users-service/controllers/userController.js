@@ -2,6 +2,9 @@ const pool = require("../config/db");
 const User = require("../models/User");
 
 exports.listUsers = async (req, res) => {
+  if (req.userRole !== "ASSOCIATION") {
+    return res.status(403).json({ message: "Reserve a l'association" });
+  }
   try {
     const limit = Math.min(parseInt(req.query.limit || "50", 10), 200);
     const offset = Math.max(parseInt(req.query.offset || "0", 10), 0);
@@ -14,6 +17,9 @@ exports.listUsers = async (req, res) => {
 };
 
 exports.getUserById = async (req, res) => {
+  if (req.userRole !== "ASSOCIATION") {
+    return res.status(403).json({ message: "Reserve a l'association" });
+  }
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });

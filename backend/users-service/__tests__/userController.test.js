@@ -27,7 +27,7 @@ describe("userController.listUsers", () => {
   it("retourne la liste des utilisateurs avec limit et offset par défaut", async () => {
     User.findAll.mockResolvedValue([{ id: "1", username: "john" }]);
 
-    const req = { query: {} };
+    const req = { query: {}, userRole: "ASSOCIATION" };
     const res = mockRes();
     await userController.listUsers(req, res);
 
@@ -40,7 +40,7 @@ describe("userController.listUsers", () => {
   it("limite à 200 même si limit > 200 est demandé", async () => {
     User.findAll.mockResolvedValue([]);
 
-    const req = { query: { limit: "500", offset: "10" } };
+    const req = { query: { limit: "500", offset: "10" }, userRole: "ASSOCIATION" };
     const res = mockRes();
     await userController.listUsers(req, res);
 
@@ -50,11 +50,20 @@ describe("userController.listUsers", () => {
   it("retourne 500 sur erreur DB", async () => {
     User.findAll.mockRejectedValue(new Error("DB error"));
 
-    const req = { query: {} };
+    const req = { query: {}, userRole: "ASSOCIATION" };
     const res = mockRes();
     await userController.listUsers(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  it("retourne 403 si l'utilisateur n'est pas de l'association", async () => {
+    const req = { query: {}, userRole: "SEEKER" };
+    const res = mockRes();
+    await userController.listUsers(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(User.findAll).not.toHaveBeenCalled();
   });
 });
 
@@ -67,7 +76,7 @@ describe("userController.getUserById", () => {
   it("retourne l'utilisateur trouvé", async () => {
     User.findById.mockResolvedValue({ id: "uuid-1", username: "john" });
 
-    const req = { params: { id: "uuid-1" } };
+    const req = { params: { id: "uuid-1" }, userRole: "ASSOCIATION" };
     const res = mockRes();
     await userController.getUserById(req, res);
 
@@ -77,7 +86,7 @@ describe("userController.getUserById", () => {
   it("retourne 404 si utilisateur introuvable", async () => {
     User.findById.mockResolvedValue(null);
 
-    const req = { params: { id: "nonexistent" } };
+    const req = { params: { id: "nonexistent" }, userRole: "ASSOCIATION" };
     const res = mockRes();
     await userController.getUserById(req, res);
 
@@ -88,11 +97,20 @@ describe("userController.getUserById", () => {
   it("retourne 500 sur erreur DB", async () => {
     User.findById.mockRejectedValue(new Error("DB error"));
 
-    const req = { params: { id: "uuid-1" } };
+    const req = { params: { id: "uuid-1" }, userRole: "ASSOCIATION" };
     const res = mockRes();
     await userController.getUserById(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  it("retourne 403 si l'utilisateur n'est pas de l'association", async () => {
+    const req = { params: { id: "uuid-1" }, userRole: "OWNER" };
+    const res = mockRes();
+    await userController.getUserById(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(User.findById).not.toHaveBeenCalled();
   });
 });
 
