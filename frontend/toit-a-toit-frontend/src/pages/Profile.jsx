@@ -4,26 +4,39 @@ import { PageShell } from '../components/templates';
 import { getCurrentUser } from '../services/auth';
 import { listMyListings } from '../services/colocations';
 import { getMyProfile } from '../services/profile';
+import { listMyApplications } from '../services/applications';
+import { listConversations } from '../services/messages';
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [userListings, setUserListings] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [conversations, setConversations] = useState([]);
   const cachedUser = getCurrentUser();
 
   useEffect(() => {
     let isMounted = true;
     const load = async () => {
       try {
-        const [profileResponse, listingsResponse] = await Promise.all([
-          getMyProfile(),
-          listMyListings(),
-        ]);
+        const profileResponse = await getMyProfile();
+        if (!isMounted) return;
+        setProfileData(profileResponse);
 
-        if (isMounted) {
-          setProfileData(profileResponse);
-          setUserListings(listingsResponse.slice(0, 2));
+        const role = profileResponse?.profile?.role;
+        if (role === 'OWNER') {
+          const listingsResponse = await listMyListings();
+          if (isMounted) setUserListings(listingsResponse.slice(0, 2));
+        } else {
+          const [applicationsResponse, conversationsResponse] = await Promise.all([
+            listMyApplications(),
+            listConversations(),
+          ]);
+          if (isMounted) {
+            setApplications(applicationsResponse.slice(0, 2));
+            setConversations(conversationsResponse.slice(0, 2));
+          }
         }
       } catch {
         if (isMounted) setError('Impossible de charger le profil.');
@@ -75,6 +88,8 @@ const Profile = () => {
 
             <ProfileStoryAndListings
               listings={userListings}
+              applications={applications}
+              conversations={conversations}
               verificationText={verificationText}
               user={{ ...user, bio: profileData?.profile?.bio }}
               role={role}
