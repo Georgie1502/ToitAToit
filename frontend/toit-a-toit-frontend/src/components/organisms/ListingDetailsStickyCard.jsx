@@ -60,9 +60,9 @@ const ListingDetailsStickyCard = ({
         <div className="flex items-start gap-4">
           <span className="material-symbols-outlined text-3xl text-tertiary">verified_user</span>
           <div>
-            <h4 className="font-bold text-on-tertiary-container">Annonce en avant</h4>
+            <h4 className="font-bold text-on-tertiary-container">Contact vérifié</h4>
             <p className="mt-1 text-xs text-on-tertiary-container/80">
-              Les informations essentielles sont regroupées pour simplifier la lecture et la comparaison.
+              Candidatez directement auprès de l’hôte pour échanger sur ce logement et organiser une visite.
             </p>
           </div>
         </div>

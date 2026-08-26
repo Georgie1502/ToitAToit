@@ -38,7 +38,7 @@ const Hero = () => {
             <div className="absolute bottom-6 right-12 h-10 w-10 rounded-full bg-primary/10" />
             <div className="flex min-h-[280px] items-end justify-center px-6 pb-6 text-center">
               <div className="rounded-2xl bg-surface px-6 py-5 text-sm text-muted shadow-soft">
-                Ajoute ton illustration dans public/hero-people.png
+                Des colocations humaines, choisies avec soin.
               </div>
             </div>
           </div>

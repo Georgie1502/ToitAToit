@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
 import { createListing } from '../services/colocations';
+import { getCurrentUser } from '../services/auth';
 
 const VALEURS_OPTIONS = [
   { value: 'RESPECT_ESPACE', label: "Respect de l'espace de chacun" },
@@ -59,6 +60,7 @@ const choiceClass = (active) =>
   }`;
 
 const PublierAnnonce = () => {
+  const currentUser = getCurrentUser();
   const [formData, setFormData] = useState({
     title: '', description: '', rent_amount: '', charges_included: false,
     surface_m2: '', housing_type: '', available_from: '', available_to: '',
@@ -458,20 +460,13 @@ const PublierAnnonce = () => {
                       </div>
                     </div>
                     <div>
-                      <p className="text-lg font-bold text-ink">Clara M.</p>
-                      <p className="text-sm font-medium text-primary">Hôte Solidaire</p>
+                      <p className="text-lg font-bold text-ink">{currentUser?.username || 'Vous'}</p>
+                      <p className="text-sm font-medium text-primary">Hôte solidaire</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-[1rem] bg-surface p-4 text-center">
-                      <p className="text-2xl font-bold text-primary">100%</p>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted">Confiance</p>
-                    </div>
-                    <div className="rounded-[1rem] bg-surface p-4 text-center">
-                      <p className="text-2xl font-bold text-primary">24h</p>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted">Rép. Moyenne</p>
-                    </div>
-                  </div>
+                  <p className="text-sm leading-relaxed text-muted">
+                    Votre annonce sera publiée sous ce profil et visible par les personnes en recherche de colocation.
+                  </p>
                   {photoFiles.length > 0 ? (
                     <div className="rounded-[1rem] bg-surfaceContainer p-4 text-sm text-ink">
                       {photoFiles.length} photo{photoFiles.length > 1 ? 's' : ''} ajoutée{photoFiles.length > 1 ? 's' : ''} depuis votre ordinateur.

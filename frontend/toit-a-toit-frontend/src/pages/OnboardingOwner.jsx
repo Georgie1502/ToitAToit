@@ -16,7 +16,7 @@ const OnboardingOwner = () => {
     title: '', description: '', rent_amount: '', charges_included: false,
     surface_m2: '', housing_type: '', available_from: '', available_to: '',
     min_duration_months: '', city: '', postal_code: '', address: '',
-    photo_urls: '/annonces/appartement.jpg\n/annonces/chambre.jpg\n/annonces/salon.jpg',
+    photo_urls: '',
   });
   const [photoFiles, setPhotoFiles] = useState([]);
   const [error, setError] = useState('');
