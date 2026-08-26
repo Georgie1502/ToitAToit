@@ -9,6 +9,10 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.12.0] - 2026-08-26
+
+### Ajouté
+- ajouter des images et améliorer le texte des annonces pour une meilleure clarté (#208)
 ## [0.11.13] - 2026-08-26
 
 ### Corrigé
