@@ -28,6 +28,9 @@ const Profile = () => {
         if (role === 'OWNER') {
           const listingsResponse = await listMyListings();
           if (isMounted) setUserListings(listingsResponse.slice(0, 2));
+        } else if (role === 'ASSOCIATION') {
+          const conversationsResponse = await listConversations();
+          if (isMounted) setConversations(conversationsResponse.slice(0, 2));
         } else {
           const [applicationsResponse, conversationsResponse] = await Promise.all([
             listMyApplications(),
