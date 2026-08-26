@@ -8,8 +8,14 @@ const applicationStatusLabels = {
   WITHDRAWN: 'Retirée',
 };
 
+const roleTaglines = {
+  OWNER: 'hôte solidaire',
+  ASSOCIATION: 'association solidaire',
+};
+
 const ProfileStoryAndListings = ({ listings = [], applications = [], conversations = [], verificationText, user, role }) => {
   const isOwner = role === 'OWNER';
+  const isAssociation = role === 'ASSOCIATION';
 
   return (
     <section className="lg:col-span-8 space-y-12">
@@ -24,7 +30,7 @@ const ProfileStoryAndListings = ({ listings = [], applications = [], conversatio
             : 'Je crois fermement que le logement ne devrait pas seulement être un toit, mais un espace de solidarité. Partager son quotidien, c’est créer un cadre plus humain et plus utile.'}
         </blockquote>
         <p className="mt-4 font-body text-sm italic text-on-surface/60">
-          — {user?.username || 'Votre profil'}, {role === 'OWNER' ? 'hôte solidaire' : 'chercheur(euse) de colocation'}
+          — {user?.username || 'Votre profil'}, {roleTaglines[role] || 'chercheur(euse) de colocation'}
         </p>
       </div>
 
@@ -60,39 +66,41 @@ const ProfileStoryAndListings = ({ listings = [], applications = [], conversatio
         </div>
       ) : (
         <>
-          <div className="space-y-8">
-            <div className="flex items-end justify-between">
-              <h2 className="font-headline text-2xl font-bold text-on-surface">Mes candidatures</h2>
-              <Link className="font-headline text-sm font-bold text-primary underline-offset-8 transition-all hover:underline" to="/mes-demandes">
-                Tout voir
-              </Link>
-            </div>
+          {!isAssociation ? (
+            <div className="space-y-8">
+              <div className="flex items-end justify-between">
+                <h2 className="font-headline text-2xl font-bold text-on-surface">Mes candidatures</h2>
+                <Link className="font-headline text-sm font-bold text-primary underline-offset-8 transition-all hover:underline" to="/mes-demandes">
+                  Tout voir
+                </Link>
+              </div>
 
-            {applications.length > 0 ? (
-              <div className="space-y-4">
-                {applications.map((app) => (
-                  <Link
-                    key={app.id}
-                    to={`/annonces/${app.listing_id}`}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] bg-surface p-6 shadow-soft transition hover:shadow-lift"
-                  >
-                    <div>
-                      <p className="font-headline font-bold text-on-surface">{app.title || 'Annonce'}</p>
-                      {app.city ? <p className="font-body text-sm text-on-surface-variant">{app.city}</p> : null}
-                    </div>
-                    <span className="rounded-full bg-surfaceContainer px-3 py-1 font-body text-xs font-semibold text-on-surface-variant">
-                      {applicationStatusLabels[app.status] || app.status}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-[1.5rem] bg-surface p-10 text-center shadow-soft">
-                <p className="font-headline text-xl font-bold text-on-surface">Aucune candidature envoyée</p>
-                <p className="mt-2 font-body text-sm text-on-surface-variant">Postulez à une annonce pour la retrouver ici.</p>
-              </div>
-            )}
-          </div>
+              {applications.length > 0 ? (
+                <div className="space-y-4">
+                  {applications.map((app) => (
+                    <Link
+                      key={app.id}
+                      to={`/annonces/${app.listing_id}`}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] bg-surface p-6 shadow-soft transition hover:shadow-lift"
+                    >
+                      <div>
+                        <p className="font-headline font-bold text-on-surface">{app.title || 'Annonce'}</p>
+                        {app.city ? <p className="font-body text-sm text-on-surface-variant">{app.city}</p> : null}
+                      </div>
+                      <span className="rounded-full bg-surfaceContainer px-3 py-1 font-body text-xs font-semibold text-on-surface-variant">
+                        {applicationStatusLabels[app.status] || app.status}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-[1.5rem] bg-surface p-10 text-center shadow-soft">
+                  <p className="font-headline text-xl font-bold text-on-surface">Aucune candidature envoyée</p>
+                  <p className="mt-2 font-body text-sm text-on-surface-variant">Postulez à une annonce pour la retrouver ici.</p>
+                </div>
+              )}
+            </div>
+          ) : null}
 
           <div className="space-y-8">
             <div className="flex items-end justify-between">
