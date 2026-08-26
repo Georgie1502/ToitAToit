@@ -6,7 +6,7 @@ const { SERVICES } = require('../config/services');
  * @param {string} serviceKey - Clé du service (USERS, COLOCATIONS, MESSAGES)
  * @param {string} pathRewrite - Pattern de réécriture du chemin
  */
-const createServiceProxy = (serviceKey, pathRewrite = {}) => {
+const createServiceProxy = (serviceKey, pathRewriteRules = {}) => {
   const service = SERVICES[serviceKey];
 
   if (!service) {
@@ -16,7 +16,16 @@ const createServiceProxy = (serviceKey, pathRewrite = {}) => {
   return createProxyMiddleware({
     target: service.url,
     changeOrigin: true,
-    pathRewrite: pathRewrite,
+    // req.originalUrl garde le chemin complet même quand ce middleware est
+    // monte via plusieurs niveaux de router.use(path, ...), qui tronquent
+    // req.url a chaque niveau (ex. /api/colocations/applications -> /applications).
+    pathRewrite: (_path, req) => {
+      let rewritten = req.originalUrl;
+      Object.entries(pathRewriteRules).forEach(([pattern, replacement]) => {
+        rewritten = rewritten.replace(new RegExp(pattern), replacement);
+      });
+      return rewritten;
+    },
     timeout: service.timeout,
     
     // Logs pour le debugging
