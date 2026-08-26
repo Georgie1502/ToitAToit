@@ -13,6 +13,13 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 ### Ajouté
 - ajouter des images et améliorer le texte des annonces pour une meilleure clarté (#208)
+## [0.11.13] - 2026-08-26
+
+### Corrigé
+- **gateway**: corriger le pathRewrite proxy qui cassait toutes les routes (#205)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.11.12 (#203)
 
 
 ## [0.11.12] - 2026-08-25
