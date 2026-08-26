@@ -20,7 +20,7 @@ const ListingDetailsMainSections = ({
         <div className="space-y-4 text-on-surface-variant leading-relaxed">
           <p>{listing.description}</p>
           <p>
-            L’annonce rassemble les informations utiles pour se projeter rapidement : loyer, surface, disponibilité et localisation.
+            Loyer, surface, disponibilité et localisation : toutes les informations clés pour se projeter rapidement dans ce logement.
           </p>
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -47,7 +47,7 @@ const ListingDetailsMainSections = ({
               <div>
                 <h4 className="font-bold text-on-surface">Cadre stable</h4>
                 <p className="text-sm text-on-surface-variant">
-                  Une annonce pensée pour rendre la colocation lisible, rassurante et facile à comparer.
+                  Un espace de vie partagé où chacun trouve sa place, dans le respect du rythme et des besoins de tous.
                 </p>
               </div>
             </div>
@@ -58,7 +58,7 @@ const ListingDetailsMainSections = ({
               <div>
                 <h4 className="font-bold text-on-surface">Vie quotidienne</h4>
                 <p className="text-sm text-on-surface-variant">
-                  Le logement met en avant des critères concrets plutôt qu’un discours trop vague.
+                  Repas partagés, moments d’échange ou temps calmes : le quotidien s’organise autour de l’entraide et de la convivialité.
                 </p>
               </div>
             </div>
@@ -87,21 +87,21 @@ const ListingDetailsMainSections = ({
       <section className="rounded-[1.5rem] bg-secondaryContainer/20 p-8">
         <h2 className="mb-4 font-display text-3xl font-bold text-ink">Ouverture solidaire</h2>
         <p className="mb-8 leading-relaxed text-on-surface-variant">
-          Cette fiche d’annonce met l’accent sur un cadre clair et bienveillant pour aider chacun à se projeter rapidement.
+          La colocation solidaire repose sur l’écoute, l’entraide et le respect du rythme de chacun, pour construire un cadre de vie rassurant et inclusif.
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex items-center gap-4 rounded-[1.25rem] bg-white p-6">
             <span className="material-symbols-outlined text-3xl text-primary">school</span>
             <div>
-              <span className="block font-bold text-on-surface">Lecture rapide</span>
-              <span className="text-xs text-on-surface-variant">Les informations essentielles sont visibles immédiatement.</span>
+              <span className="block font-bold text-on-surface">Entraide au quotidien</span>
+              <span className="text-xs text-on-surface-variant">Les colocataires s’organisent ensemble et s’épaulent dans les gestes du quotidien.</span>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-[1.25rem] bg-white p-6">
             <span className="material-symbols-outlined text-3xl text-primary">moving</span>
             <div>
-              <span className="block font-bold text-on-surface">Décision facilitée</span>
-              <span className="text-xs text-on-surface-variant">Photos, prix et disponibilité sont regroupés au même endroit.</span>
+              <span className="block font-bold text-on-surface">Respect du rythme de chacun</span>
+              <span className="text-xs text-on-surface-variant">Un cadre bienveillant qui laisse la place à l’autonomie de chacun.</span>
             </div>
           </div>
         </div>
