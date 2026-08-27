@@ -252,6 +252,22 @@ describe("colocationsController.updateListing", () => {
     });
   });
 
+  it("autorise la modification d'une annonce déjà publiée sans changer son statut", async () => {
+    pool.query.mockResolvedValueOnce({ rows: [{ id: "l-1", owner_user_id: "uuid-owner", status: "PUBLISHED" }] });
+    const updated = { id: "l-1", rent_amount: 700, status: "PUBLISHED" };
+    mockClient.query
+      .mockResolvedValueOnce({})                    // BEGIN
+      .mockResolvedValueOnce({ rows: [updated] })   // UPDATE listings
+      .mockResolvedValueOnce({});                   // COMMIT
+
+    const req = { params: { id: "l-1" }, userId: "uuid-owner", body: { rent_amount: "700", status: "PUBLISHED" } };
+    const res = mockRes();
+    await colocationsController.updateListing(req, res);
+
+    expect(res.status).not.toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ listing: updated });
+  });
+
   it("retourne 400 si aucun champ à modifier", async () => {
     pool.query.mockResolvedValueOnce({ rows: [{ id: "l-1", owner_user_id: "uuid-owner" }] });
 

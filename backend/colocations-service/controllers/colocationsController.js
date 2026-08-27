@@ -335,7 +335,7 @@ exports.updateListing = async (req, res) => {
     const userId = req.userId;
 
     const existing = await pool.query(
-      "SELECT id, owner_user_id FROM listings WHERE id = $1",
+      "SELECT id, owner_user_id, status FROM listings WHERE id = $1",
       [listingId],
     );
     if (existing.rows.length === 0) {
@@ -374,7 +374,7 @@ exports.updateListing = async (req, res) => {
       if (key === "status" && value && !ALLOWED_STATUSES.has(value)) {
         return res.status(400).json({ message: "status invalide" });
       }
-      if (key === "status" && value === "PUBLISHED") {
+      if (key === "status" && value === "PUBLISHED" && existing.rows[0].status !== "PUBLISHED") {
         return res.status(403).json({ message: "Seule l'association peut publier une annonce" });
       }
       if (key === "rent_amount" && value === null) {

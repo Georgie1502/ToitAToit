@@ -187,10 +187,13 @@ const MyListings = () => {
                       Statut
                       <select name="status" value={editForm.status} onChange={handleEditChange} className={field}>
                         <option value="DRAFT">Brouillon</option>
-                        <option value="PUBLISHED">Publié</option>
+                        <option value="PUBLISHED" disabled={editForm.status !== 'PUBLISHED'}>Publié</option>
                         <option value="PAUSED">En pause</option>
                         <option value="CLOSED">Fermé</option>
                       </select>
+                      <span className="font-body text-xs font-normal text-muted">
+                        Seule l'association peut publier votre annonce.
+                      </span>
                     </label>
                   </div>
                   <div className="mt-5 flex flex-wrap gap-2">
