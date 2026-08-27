@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.13.1] - 2026-08-27
+
+### Corrigé
+- **profil**: remplacer les photos d'avatar par défaut (#225)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.13.0 (#224)
+
+
 ## [0.13.0] - 2026-08-27
 
 ### Ajouté
