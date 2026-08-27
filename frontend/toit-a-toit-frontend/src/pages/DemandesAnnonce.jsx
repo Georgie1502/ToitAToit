@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
-import { listApplicationsForListing, updateApplicationStatus } from '../services/applications';
+import { listApplicationsForListing } from '../services/applications';
 import { getListingById } from '../services/colocations';
 
 const statusConfig = {
@@ -12,7 +12,7 @@ const statusConfig = {
   WITHDRAWN: { label: 'Retirée', className: 'bg-surfaceContainer text-muted' },
 };
 
-const ApplicationRow = ({ application, onAction, actionLoading }) => {
+const ApplicationRow = ({ application }) => {
   const status = statusConfig[application.status] || { label: application.status, className: 'bg-surfaceContainer text-muted' };
   return (
     <li className="rounded-3xl bg-surface p-6 shadow-soft transition duration-200 hover:shadow-lift">
@@ -35,16 +35,6 @@ const ApplicationRow = ({ application, onAction, actionLoading }) => {
             Reçue le {new Date(application.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
-        {application.status === 'SENT' ? (
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" size="sm" variant="primary" onClick={() => onAction(application.id, 'ACCEPTED')} disabled={actionLoading !== null}>
-              {actionLoading === application.id + 'ACCEPTED' ? 'En cours...' : 'Accepter'}
-            </Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => onAction(application.id, 'REJECTED')} disabled={actionLoading !== null}>
-              {actionLoading === application.id + 'REJECTED' ? 'En cours...' : 'Refuser'}
-            </Button>
-          </div>
-        ) : null}
       </div>
     </li>
   );
@@ -56,7 +46,6 @@ const DemandesAnnonce = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [actionLoading, setActionLoading] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -75,19 +64,6 @@ const DemandesAnnonce = () => {
     load();
     return () => { isMounted = false; };
   }, [id]);
-
-  const handleAction = async (applicationId, status) => {
-    setActionLoading(applicationId + status);
-    setError('');
-    try {
-      const updated = await updateApplicationStatus(applicationId, status);
-      setApplications((prev) => prev.map((a) => (a.id === applicationId ? { ...a, status: updated.status } : a)));
-    } catch (err) {
-      setError(err.response?.data?.message || 'Impossible de mettre à jour cette candidature.');
-    } finally {
-      setActionLoading(null);
-    }
-  };
 
   const sent = applications.filter((a) => a.status === 'SENT');
   const others = applications.filter((a) => a.status !== 'SENT');
@@ -108,6 +84,7 @@ const DemandesAnnonce = () => {
               <span className="font-semibold text-ink">{sent.length}</span> en attente · {applications.length} au total
             </p>
           ) : null}
+          <p className="font-body text-xs text-muted">La sélection des candidats est gérée par l'association.</p>
         </div>
 
         {error ? (
@@ -129,7 +106,7 @@ const DemandesAnnonce = () => {
               <section className="space-y-4">
                 <p className="font-body text-xs font-semibold uppercase tracking-widest text-primary">En attente ({sent.length})</p>
                 <ul className="space-y-4">
-                  {sent.map((app) => <ApplicationRow key={app.id} application={app} onAction={handleAction} actionLoading={actionLoading} />)}
+                  {sent.map((app) => <ApplicationRow key={app.id} application={app} />)}
                 </ul>
               </section>
             ) : null}
@@ -137,7 +114,7 @@ const DemandesAnnonce = () => {
               <section className="space-y-4">
                 <p className="font-body text-xs font-semibold uppercase tracking-widest text-muted">Traitées ({others.length})</p>
                 <ul className="space-y-4">
-                  {others.map((app) => <ApplicationRow key={app.id} application={app} onAction={handleAction} actionLoading={actionLoading} />)}
+                  {others.map((app) => <ApplicationRow key={app.id} application={app} />)}
                 </ul>
               </section>
             ) : null}
