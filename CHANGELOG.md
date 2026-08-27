@@ -9,6 +9,17 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.12.1] - 2026-08-27
+
+### Corrigé
+- **auth**: renvoyer l'id utilisateur à la connexion pour corriger l'alignement des messages (#212)
+- corriger la section Mes candidatures affichée à tort pour une association (#210)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.12.0 (#209)
+- **changelog**: update CHANGELOG for v0.11.13 (#207)
+
+
 ## [0.12.0] - 2026-08-26
 
 ### Ajouté
