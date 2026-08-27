@@ -19,7 +19,7 @@ const ProfileHeroCard = ({ user, locationLabel, role, onEdit, onShare }) => {
       <div className="relative mx-auto mb-6 h-48 w-48">
         <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border-4 border-white bg-gradient-to-br from-primaryContainer via-secondaryContainer to-tertiaryContainer ring-8 ring-surfaceContainer text-4xl font-extrabold text-on-surface">
           {avatarUrl ? (
-            <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+            <img src={avatarUrl} alt="" className="h-full w-full object-cover object-top" />
           ) : (
             <span className="font-headline">{initials}</span>
           )}
