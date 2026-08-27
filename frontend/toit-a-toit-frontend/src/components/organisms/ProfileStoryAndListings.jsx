@@ -118,7 +118,9 @@ const ProfileStoryAndListings = ({ listings = [], applications = [], conversatio
                     to={`/messages/${conv.id}`}
                     className="block rounded-[1.5rem] bg-surface p-6 shadow-soft transition hover:shadow-lift"
                   >
-                    <p className="font-headline font-bold text-on-surface">Échange #{conv.id.slice(0, 8)}</p>
+                    <p className="font-headline font-bold text-on-surface">
+                      {conv.other_username || `Échange #${conv.id.slice(0, 8)}`}
+                    </p>
                     {conv.last_message_body ? (
                       <p className="mt-1 truncate font-body text-sm text-on-surface-variant">{conv.last_message_body}</p>
                     ) : null}

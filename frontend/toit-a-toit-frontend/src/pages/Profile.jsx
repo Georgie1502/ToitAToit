@@ -6,6 +6,22 @@ import { listMyListings } from '../services/colocations';
 import { getMyProfile } from '../services/profile';
 import { listMyApplications } from '../services/applications';
 import { listConversations } from '../services/messages';
+import { getUsersByIds } from '../services/users';
+
+const withParticipantNames = async (conversations, myUserId) => {
+  const otherIds = [...new Set(
+    conversations
+      .map((c) => c.participant_user_ids?.find((id) => id !== myUserId))
+      .filter(Boolean),
+  )];
+  if (otherIds.length === 0) return conversations;
+  const users = await getUsersByIds(otherIds).catch(() => []);
+  const namesById = Object.fromEntries(users.map((u) => [u.id, u.username]));
+  return conversations.map((c) => {
+    const otherId = c.participant_user_ids?.find((id) => id !== myUserId);
+    return { ...c, other_username: otherId ? namesById[otherId] : null };
+  });
+};
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
@@ -25,20 +41,23 @@ const Profile = () => {
         setProfileData(profileResponse);
 
         const role = profileResponse?.profile?.role;
+        const myUserId = profileResponse?.user?.id;
         if (role === 'OWNER') {
           const listingsResponse = await listMyListings();
           if (isMounted) setUserListings(listingsResponse.slice(0, 2));
         } else if (role === 'ASSOCIATION') {
           const conversationsResponse = await listConversations();
-          if (isMounted) setConversations(conversationsResponse.slice(0, 2));
+          const withNames = await withParticipantNames(conversationsResponse.slice(0, 2), myUserId);
+          if (isMounted) setConversations(withNames);
         } else {
           const [applicationsResponse, conversationsResponse] = await Promise.all([
             listMyApplications(),
             listConversations(),
           ]);
+          const withNames = await withParticipantNames(conversationsResponse.slice(0, 2), myUserId);
           if (isMounted) {
             setApplications(applicationsResponse.slice(0, 2));
-            setConversations(conversationsResponse.slice(0, 2));
+            setConversations(withNames);
           }
         }
       } catch {
