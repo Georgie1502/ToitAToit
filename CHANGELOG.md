@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.13.0] - 2026-08-27
+
+### Ajouté
+- **profil**: avatar par défaut selon le rôle (#223)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.12.3 (#221)
+
+
 ## [0.12.3] - 2026-08-27
 
 ### Corrigé
