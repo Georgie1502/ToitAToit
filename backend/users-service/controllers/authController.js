@@ -90,7 +90,7 @@ exports.login = async (req, res) => {
 
     return res.json({
       message: "Connexion reussie",
-      user: { username: user.username, email: user.email, role },
+      user: { id: user.id, username: user.username, email: user.email, role },
     });
   } catch (err) {
     console.error(err);
