@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.12.3] - 2026-08-27
+
+### Corrigé
+- **colocations**: permettre à l'owner de sauvegarder une annonce déjà publiée (#220)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.12.2 (#218)
+
+
 ## [0.12.2] - 2026-08-27
 
 ### Corrigé
