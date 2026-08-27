@@ -10,6 +10,7 @@ import {
 } from '../components/organisms';
 import { PageShell } from '../components/templates';
 import { listMyApplications } from '../services/applications';
+import { getCurrentUser } from '../services/auth';
 import { getListingById } from '../services/colocations';
 
 const housingLabels = { ROOM: 'Chambre', STUDIO: 'Studio', FLAT: 'Appartement', HOUSE: 'Maison', OTHER: 'Autre' };
@@ -41,6 +42,8 @@ const ListingDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const currentUser = getCurrentUser();
+  const canApply = currentUser?.role !== 'OWNER' && currentUser?.role !== 'ASSOCIATION';
 
   useEffect(() => {
     let isMounted = true;
@@ -71,6 +74,7 @@ const ListingDetails = () => {
   }, [id]);
 
   useEffect(() => {
+    if (!canApply) return undefined;
     let isMounted = true;
     const checkExistingApplication = async () => {
       try {
@@ -84,7 +88,7 @@ const ListingDetails = () => {
     };
     checkExistingApplication();
     return () => { isMounted = false; };
-  }, [id]);
+  }, [id, canApply]);
 
   const photoUrls = useMemo(() => {
     const urls = [
@@ -293,6 +297,7 @@ const ListingDetails = () => {
                 hasApplied={hasApplied}
                 isFavorite={isFavorite}
                 detailRows={detailRows}
+                canApply={canApply}
                 onContact={handleOpenModal}
                 onToggleFavorite={handleFavorite}
               />

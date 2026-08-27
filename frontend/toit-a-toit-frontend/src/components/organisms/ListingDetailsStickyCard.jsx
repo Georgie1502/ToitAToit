@@ -6,6 +6,7 @@ const ListingDetailsStickyCard = ({
   hasApplied,
   isFavorite,
   detailRows,
+  canApply,
   onContact,
   onToggleFavorite,
 }) => {
@@ -20,31 +21,33 @@ const ListingDetailsStickyCard = ({
           </p>
         </div>
 
-        <div className="space-y-4">
-          <Button
-            type="button"
-            variant={hasApplied ? 'ghost' : 'primary'}
-            size="lg"
-            className="w-full"
-            onClick={onContact}
-            disabled={hasApplied}
-          >
-            <span className="material-symbols-outlined text-[18px]">
-              {hasApplied ? 'check_circle' : 'send'}
-            </span>
-            {hasApplied ? 'Candidature envoyée' : 'Candidater'}
-          </Button>
-          <Button
-            type="button"
-            variant={isFavorite ? 'secondary' : 'ghost'}
-            size="lg"
-            className={`w-full${isFavorite ? ' border-primary/25 bg-primaryContainer/20 text-primary' : ' border-2 border-primary/20'}`}
-            onClick={onToggleFavorite}
-          >
-            <span className="material-symbols-outlined text-[18px]">favorite</span>
-            {isFavorite ? 'Ajoutée aux favoris' : 'Ajouter aux favoris'}
-          </Button>
-        </div>
+        {canApply ? (
+          <div className="space-y-4">
+            <Button
+              type="button"
+              variant={hasApplied ? 'ghost' : 'primary'}
+              size="lg"
+              className="w-full"
+              onClick={onContact}
+              disabled={hasApplied}
+            >
+              <span className="material-symbols-outlined text-[18px]">
+                {hasApplied ? 'check_circle' : 'send'}
+              </span>
+              {hasApplied ? 'Candidature envoyée' : 'Candidater'}
+            </Button>
+            <Button
+              type="button"
+              variant={isFavorite ? 'secondary' : 'ghost'}
+              size="lg"
+              className={`w-full${isFavorite ? ' border-primary/25 bg-primaryContainer/20 text-primary' : ' border-2 border-primary/20'}`}
+              onClick={onToggleFavorite}
+            >
+              <span className="material-symbols-outlined text-[18px]">favorite</span>
+              {isFavorite ? 'Ajoutée aux favoris' : 'Ajouter aux favoris'}
+            </Button>
+          </div>
+        ) : null}
 
         <div className="mt-8 space-y-4 border-t border-surfaceContainer pt-8">
           {detailRows.map((row) => (
