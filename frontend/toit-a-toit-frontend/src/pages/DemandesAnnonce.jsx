@@ -4,6 +4,7 @@ import { Button } from '../components/atoms';
 import { PageShell } from '../components/templates';
 import { listApplicationsForListing } from '../services/applications';
 import { getListingById } from '../services/colocations';
+import { getUsersByIds } from '../services/users';
 
 const statusConfig = {
   SENT: { label: 'En attente', className: 'bg-secondaryContainer/50 text-ink' },
@@ -12,7 +13,7 @@ const statusConfig = {
   WITHDRAWN: { label: 'Retirée', className: 'bg-surfaceContainer text-muted' },
 };
 
-const ApplicationRow = ({ application }) => {
+const ApplicationRow = ({ application, applicantName }) => {
   const status = statusConfig[application.status] || { label: application.status, className: 'bg-surfaceContainer text-muted' };
   return (
     <li className="rounded-3xl bg-surface p-6 shadow-soft transition duration-200 hover:shadow-lift">
@@ -20,7 +21,7 @@ const ApplicationRow = ({ application }) => {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-body text-sm font-semibold text-ink">
-              Candidat · {application.applicant_user_id.slice(0, 8)}…
+              Candidat · {applicantName || `${application.applicant_user_id.slice(0, 8)}…`}
             </p>
             <span className={`rounded-full px-3 py-0.5 font-body text-xs font-semibold ${status.className}`}>
               {status.label}
@@ -44,6 +45,7 @@ const DemandesAnnonce = () => {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [namesById, setNamesById] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -54,7 +56,16 @@ const DemandesAnnonce = () => {
       setError('');
       try {
         const [listingData, appsData] = await Promise.all([getListingById(id), listApplicationsForListing(id)]);
-        if (isMounted) { setListing(listingData?.listing || null); setApplications(appsData); }
+        if (!isMounted) return;
+        setListing(listingData?.listing || null);
+        setApplications(appsData);
+
+        const uniqueApplicantIds = [...new Set(appsData.map((a) => a.applicant_user_id))];
+        if (uniqueApplicantIds.length > 0) {
+          const users = await getUsersByIds(uniqueApplicantIds).catch(() => []);
+          if (!isMounted) return;
+          setNamesById(Object.fromEntries(users.map((u) => [u.id, u.username])));
+        }
       } catch (err) {
         if (isMounted) setError(err.response?.data?.message || 'Impossible de charger les candidatures.');
       } finally {
@@ -106,7 +117,9 @@ const DemandesAnnonce = () => {
               <section className="space-y-4">
                 <p className="font-body text-xs font-semibold uppercase tracking-widest text-primary">En attente ({sent.length})</p>
                 <ul className="space-y-4">
-                  {sent.map((app) => <ApplicationRow key={app.id} application={app} />)}
+                  {sent.map((app) => (
+                    <ApplicationRow key={app.id} application={app} applicantName={namesById[app.applicant_user_id]} />
+                  ))}
                 </ul>
               </section>
             ) : null}
@@ -114,7 +127,9 @@ const DemandesAnnonce = () => {
               <section className="space-y-4">
                 <p className="font-body text-xs font-semibold uppercase tracking-widest text-muted">Traitées ({others.length})</p>
                 <ul className="space-y-4">
-                  {others.map((app) => <ApplicationRow key={app.id} application={app} />)}
+                  {others.map((app) => (
+                    <ApplicationRow key={app.id} application={app} applicantName={namesById[app.applicant_user_id]} />
+                  ))}
                 </ul>
               </section>
             ) : null}

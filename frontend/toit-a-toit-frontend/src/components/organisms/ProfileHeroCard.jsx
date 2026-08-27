@@ -39,7 +39,7 @@ const ProfileHeroCard = ({ user, locationLabel, role, onEdit, onShare }) => {
         <button
           type="button"
           onClick={onEdit}
-          className="flex-1 rounded-full bg-primary py-3 font-headline text-sm font-bold text-on-primary shadow-md transition-all hover:shadow-xl active:scale-95"
+          className="flex-1 rounded-full bg-primary py-3 font-headline text-sm font-bold text-inverse shadow-md transition-all hover:shadow-xl active:scale-95"
         >
           Modifier le profil
         </button>
