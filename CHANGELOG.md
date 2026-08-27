@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.13.2] - 2026-08-27
+
+### Corrigé
+- **frontend**: afficher le nom du candidat et corriger la couleur du bouton profil (#228)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.13.1 (#226)
+
+
 ## [0.13.1] - 2026-08-27
 
 ### Corrigé
