@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.12.2] - 2026-08-27
+
+### Corrigé
+- **frontend**: masquer les actions incohérentes avec le rôle OWNER (#217)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.12.1 (#215)
+
+
 ## [0.12.1] - 2026-08-27
 
 ### Corrigé
