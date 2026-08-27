@@ -4,6 +4,7 @@ import { PageShell } from '../components/templates';
 import { getCurrentUser } from '../services/auth';
 import { listConversations } from '../services/messages';
 import { getListingById } from '../services/colocations';
+import { getUsersByIds } from '../services/users';
 
 const formatDate = (value) => {
   if (!value) return '';
@@ -19,6 +20,7 @@ const formatDate = (value) => {
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
   const [listingTitles, setListingTitles] = useState({});
+  const [namesById, setNamesById] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const currentUser = getCurrentUser();
@@ -43,6 +45,17 @@ const Messages = () => {
           });
           setListingTitles(titles);
         }
+
+        const otherIds = [...new Set(
+          convs
+            .map((c) => c.participant_user_ids?.find((id) => id !== currentUser?.id))
+            .filter(Boolean),
+        )];
+        if (otherIds.length > 0) {
+          const users = await getUsersByIds(otherIds).catch(() => []);
+          if (!isMounted) return;
+          setNamesById(Object.fromEntries(users.map((u) => [u.id, u.username])));
+        }
       } catch {
         if (isMounted) setError('Impossible de charger les messages.');
       } finally {
@@ -51,7 +64,7 @@ const Messages = () => {
     };
     load();
     return () => { isMounted = false; };
-  }, []);
+  }, [currentUser?.id]);
 
   return (
     <PageShell>
@@ -80,6 +93,8 @@ const Messages = () => {
           <ul className="space-y-3">
             {conversations.map((conv) => {
               const isUnread = conv.last_message_sender_id && conv.last_message_sender_id !== currentUser?.id;
+              const otherId = conv.participant_user_ids?.find((id) => id !== currentUser?.id);
+              const otherName = otherId ? namesById[otherId] : null;
               return (
                 <li key={conv.id}>
                   <Link
@@ -88,7 +103,7 @@ const Messages = () => {
                   >
                     <div className="min-w-0 space-y-1">
                       <p className={`font-body text-sm ${isUnread ? 'font-bold text-ink' : 'font-medium text-ink'}`}>
-                        {listingTitles[conv.listing_id] || `Échange #${conv.id.slice(0, 8)}`}
+                        {listingTitles[conv.listing_id] || otherName || `Échange #${conv.id.slice(0, 8)}`}
                       </p>
                       {conv.last_message_body ? (
                         <p className="truncate font-body text-sm text-muted">
