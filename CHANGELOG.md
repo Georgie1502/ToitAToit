@@ -9,6 +9,15 @@ Les nouvelles entrées sont insérées automatiquement par GitHub Actions à cha
 
 <!-- entrées automatiques -->
 
+## [0.13.3] - 2026-08-27
+
+### Corrigé
+- **frontend**: afficher le nom du contact au lieu de l'id de conversation (#231)
+
+### Documentation
+- **changelog**: update CHANGELOG for v0.13.2 (#229)
+
+
 ## [0.13.2] - 2026-08-27
 
 ### Corrigé
