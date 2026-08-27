@@ -76,6 +76,7 @@ const Profile = () => {
               <ProfileHeroCard
                 user={user}
                 locationLabel={locationLabel}
+                role={role}
                 onEdit={() => window.location.assign('/onboarding-role')}
                 onShare={async () => {
                   try {
